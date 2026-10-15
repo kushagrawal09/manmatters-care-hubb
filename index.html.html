@@ -1,0 +1,2251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Man Matters Care Hub | Single-Window Care Portal</title>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Google Fonts: Plus Jakarta Sans & Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            oat: '#FBF9F5',
+            creamCard: '#F4EFEA',
+            oatBorder: '#E6DFD5',
+            ink: '#19232D',
+            inkLight: '#2C3A47',
+            inkMuted: '#64748B',
+            terracotta: '#D05A3F',
+            terracottaDark: '#B84930',
+            terracottaLight: '#FDF1EC',
+            herbal: '#197754',
+            herbalDark: '#125C40',
+            herbalLight: '#E8F4EE',
+            nightBg: '#111A24',
+            nightCard: '#182432',
+            nightBorder: '#27384A',
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            heading: ['Plus Jakarta Sans', 'sans-serif'],
+          },
+          boxShadow: {
+            subtle: '0 4px 18px -2px rgba(25, 35, 45, 0.05)',
+            card: '0 8px 24px -4px rgba(25, 35, 45, 0.08)',
+            elevated: '0 20px 40px -8px rgba(25, 35, 45, 0.14)',
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Compact, clean scrollbars */
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-track { background: #FBF9F5; }
+    ::-webkit-scrollbar-thumb { background: #D9D2C7; border-radius: 9999px; }
+    ::-webkit-scrollbar-thumb:hover { background: #B8AFA2; }
+
+    .fluid-meniscus {
+      animation: floatMeniscus 3.5s ease-in-out infinite alternate;
+    }
+    @keyframes floatMeniscus {
+      0% { transform: translateY(0px); }
+      100% { transform: translateY(1.5px); }
+    }
+
+    .smooth-fill-transition {
+      transition: height 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), y 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+  </style>
+</head>
+<body class="bg-oat text-ink font-sans min-h-screen flex flex-col antialiased selection:bg-terracotta selection:text-white">
+
+  <!-- ========================================================================= -->
+  <!-- NATIVE WEB AUDIO SYNTHESIZER (Pleasant harmonic feedback, zero MP3 files) -->
+  <!-- ========================================================================= -->
+  <script>
+    const HubAudio = {
+      ctx: null,
+      init() {
+        if (!this.ctx) {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          if (AudioContext) this.ctx = new AudioContext();
+        }
+      },
+      doseChime() {
+        try {
+          this.init();
+          if (!this.ctx) return;
+          const notes = [523.25, 659.25, 783.99]; // C5, E5, G5 major chord
+          notes.forEach((freq, idx) => {
+            const osc = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(freq, this.ctx.currentTime + idx * 0.04);
+            gain.gain.setValueAtTime(0.08, this.ctx.currentTime + idx * 0.04);
+            gain.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + idx * 0.04 + 0.32);
+            osc.connect(gain);
+            gain.connect(this.ctx.destination);
+            osc.start(this.ctx.currentTime + idx * 0.04);
+            osc.stop(this.ctx.currentTime + idx * 0.04 + 0.35);
+          });
+        } catch(e) {}
+      },
+      fluidDrop() {
+        try {
+          this.init();
+          if (!this.ctx) return;
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(1200, this.ctx.currentTime);
+          osc.frequency.exponentialRampToValueAtTime(380, this.ctx.currentTime + 0.08);
+          gain.gain.setValueAtTime(0.1, this.ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.08);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start();
+          osc.stop(this.ctx.currentTime + 0.08);
+        } catch(e) {}
+      },
+      successChime() {
+        try {
+          this.init();
+          if (!this.ctx) return;
+          const chords = [440, 554.37, 659.25, 880];
+          chords.forEach((freq, idx) => {
+            const osc = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(freq, this.ctx.currentTime + idx * 0.04);
+            gain.gain.setValueAtTime(0.08, this.ctx.currentTime + idx * 0.04);
+            gain.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + idx * 0.04 + 0.36);
+            osc.connect(gain);
+            gain.connect(this.ctx.destination);
+            osc.start(this.ctx.currentTime + idx * 0.04);
+            osc.stop(this.ctx.currentTime + idx * 0.04 + 0.4);
+          });
+        } catch(e) {}
+      }
+    };
+  </script>
+
+  <!-- ========================================================================= -->
+  <!-- COMPACT TOP NAVIGATION BAR (All tabs visible on a single line)            -->
+  <!-- ========================================================================= -->
+  <header class="sticky top-0 z-40 bg-oat/95 backdrop-blur-md border-b border-oatBorder shadow-sm">
+    <div class="max-w-7xl mx-auto px-3 sm:px-6">
+      
+      <!-- Top Row: Brand & Status -->
+      <div class="flex items-center justify-between h-14 sm:h-16">
+        
+        <!-- Logo -->
+        <div class="flex items-center gap-2.5 cursor-pointer" onclick="switchTab('overview')">
+          <div class="w-8 h-8 rounded-xl bg-ink flex items-center justify-center shadow-sm">
+            <span class="font-heading font-extrabold text-white text-base tracking-tighter">m</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="font-heading font-extrabold text-lg tracking-tight text-ink">man matters</span>
+            <span class="text-[9px] font-extrabold tracking-wider bg-herbalLight text-herbal border border-herbal/30 px-2 py-0.2 rounded-full uppercase">Care Hub</span>
+          </div>
+        </div>
+
+        <!-- Right Quick Status Items -->
+        <div class="flex items-center gap-2 sm:gap-3">
+          
+          <!-- Grace Shield Badge -->
+          <div onclick="switchTab('tracker')" class="flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-herbalLight border border-herbal/30 text-herbal text-[11px] font-bold cursor-pointer hover:bg-herbal/20 transition" title="1 Grace Day active: 1 missed dose won't break your streak">
+            <i class="fa-solid fa-shield-halved text-xs"></i>
+            <span class="hidden sm:inline">1 Grace Day Active</span>
+            <span class="sm:hidden">Grace Active</span>
+          </div>
+
+          <!-- Active Streak -->
+          <div onclick="switchTab('tracker')" class="flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-white border border-oatBorder text-terracotta text-xs font-extrabold shadow-subtle cursor-pointer hover:border-terracotta/40 transition">
+            <i class="fa-solid fa-fire text-terracotta animate-pulse text-xs"></i>
+            <span id="headerStreakDisplay">18 Days</span>
+          </div>
+
+          <!-- WhatsApp Bot Test Ping -->
+          <button onclick="openWhatsAppModal()" class="flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-[#25D366]/10 hover:bg-[#25D366]/20 border border-[#25D366]/40 text-[#128C7E] text-[11px] font-bold transition shadow-subtle" title="Simulate WhatsApp Care Notification">
+            <i class="fa-brands fa-whatsapp text-xs text-[#25D366]"></i>
+            <span class="hidden md:inline">WhatsApp Bot</span>
+          </button>
+
+          <!-- User Avatar Button -->
+          <button onclick="openProfileDrawer()" class="flex items-center gap-1.5 p-1 sm:px-2.5 sm:py-1 rounded-xl bg-white hover:bg-creamCard border border-oatBorder shadow-subtle transition">
+            <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=80&h=80&fit=crop&crop=face" alt="Rahul" class="w-6 h-6 rounded-full object-cover border border-oatBorder">
+            <span class="text-xs font-bold text-ink hidden sm:inline" id="headerUserName">Rahul M.</span>
+            <i class="fa-solid fa-sliders text-inkMuted text-[10px] ml-0.5"></i>
+          </button>
+
+        </div>
+
+      </div>
+
+      <!-- Single-Line Compact Navigation Tabs (No horizontal scroll needed) -->
+      <nav class="flex items-center justify-between gap-1 py-1.5 border-t border-oatBorder text-xs font-semibold overflow-x-auto no-scrollbar">
+        
+        <button onclick="switchTab('overview')" id="tab-btn-overview" class="tab-btn px-2.5 sm:px-3 py-1.5 rounded-xl text-terracotta bg-white border border-terracotta/30 shadow-subtle flex items-center gap-1.5 whitespace-nowrap transition">
+          <i class="fa-solid fa-table-cells-large text-xs"></i>
+          <span>All at a Glance</span>
+        </button>
+
+        <button onclick="switchTab('routine')" id="tab-btn-routine" class="tab-btn px-2.5 sm:px-3 py-1.5 rounded-xl text-inkMuted hover:text-ink hover:bg-white/60 flex items-center gap-1.5 whitespace-nowrap transition">
+          <i class="fa-solid fa-calendar-check text-xs"></i>
+          <span>Daily Routine (AM/PM)</span>
+          <span id="routinePendingBadge" class="bg-terracotta text-white text-[9px] font-extrabold px-1.5 py-0.2 rounded-full">1 Due</span>
+        </button>
+
+        <button onclick="switchTab('recycling')" id="tab-btn-recycling" class="tab-btn px-2.5 sm:px-3 py-1.5 rounded-xl text-inkMuted hover:text-ink hover:bg-white/60 flex items-center gap-1.5 whitespace-nowrap transition">
+          <i class="fa-solid fa-recycle text-herbal text-xs"></i>
+          <span>Eco-Pouch Recycling</span>
+          <span class="bg-herbal text-white text-[9px] font-extrabold px-1.5 py-0.2 rounded-full">3/3</span>
+        </button>
+
+        <button onclick="switchTab('supply')" id="tab-btn-supply" class="tab-btn px-2.5 sm:px-3 py-1.5 rounded-xl text-inkMuted hover:text-ink hover:bg-white/60 flex items-center gap-1.5 whitespace-nowrap transition">
+          <i class="fa-solid fa-prescription-bottle text-xs"></i>
+          <span>Bottles & Supply</span>
+          <span id="supplyAlertBadge" class="bg-terracotta text-white text-[9px] font-extrabold px-1.5 py-0.2 rounded-full">7d Left</span>
+        </button>
+
+        <button onclick="switchTab('journal')" id="tab-btn-journal" class="tab-btn px-2.5 sm:px-3 py-1.5 rounded-xl text-inkMuted hover:text-ink hover:bg-white/60 flex items-center gap-1.5 whitespace-nowrap transition">
+          <i class="fa-solid fa-camera text-xs"></i>
+          <span>15-Day Photo Proof</span>
+        </button>
+
+        <button onclick="switchTab('tracker')" id="tab-btn-tracker" class="tab-btn px-2.5 sm:px-3 py-1.5 rounded-xl text-inkMuted hover:text-ink hover:bg-white/60 flex items-center gap-1.5 whitespace-nowrap transition">
+          <i class="fa-solid fa-chart-line text-xs"></i>
+          <span>Streaks & Calendar</span>
+        </button>
+
+        <button onclick="switchTab('assistant')" id="tab-btn-assistant" class="tab-btn px-2.5 sm:px-3 py-1.5 rounded-xl text-inkMuted hover:text-ink hover:bg-white/60 flex items-center gap-1.5 whitespace-nowrap transition">
+          <i class="fa-solid fa-user-doctor text-terracotta text-xs"></i>
+          <span>Dr. Rohan AI</span>
+        </button>
+
+      </nav>
+
+    </div>
+  </header>
+
+  <!-- Global Toast Notification Container -->
+  <div id="toastContainer" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+  <!-- ========================================================================= -->
+  <!-- MAIN SINGLE-WINDOW CONTAINER                                              -->
+  <!-- ========================================================================= -->
+  <main class="max-w-7xl w-full mx-auto px-3 sm:px-6 pt-4 pb-20 flex-1 space-y-5">
+
+    <!-- REASSURING SHEDDING WINDOW ALERT (WEEKS 3-8) - COMPACT HEADER BANNER -->
+    <div class="px-4 py-3 rounded-2xl bg-gradient-to-r from-amber-50 via-white to-orange-50 border border-amber-300 shadow-subtle flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+      <div class="flex items-center gap-3">
+        <div class="w-8 h-8 rounded-xl bg-amber-500 text-white flex items-center justify-center text-sm shrink-0 shadow-sm">
+          <i class="fa-solid fa-hand-holding-heart"></i>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="font-extrabold uppercase text-[10px] tracking-wider text-amber-900 bg-amber-100 px-2 py-0.5 rounded-full">
+              Normal Shedding Phase • Day 42 (Week 6)
+            </span>
+            <span class="text-[11px] font-bold text-amber-800 hidden md:inline">Root reactivation is underway</span>
+          </div>
+          <p class="text-inkMuted text-[11px] mt-0.5">
+            Seeing loose hairs in the shower? Resting hairs are shedding so stronger, thicker roots can emerge.
+          </p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2 shrink-0">
+        <button onclick="openSheddingGuideModal()" class="px-3 py-1.5 rounded-xl bg-ink hover:bg-inkLight text-white font-heading font-bold text-[11px] shadow-subtle flex items-center gap-1.5 transition">
+          <i class="fa-solid fa-circle-info text-terracotta"></i>
+          <span>Why Shedding Happens (2-min guide)</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- LOW SUPPLY 1-TAP REORDER BANNER (Automatic when <= 7 days) -->
+    <div id="lowSupplyBanner" class="px-4 py-3 rounded-2xl bg-red-50/90 border border-terracotta/40 shadow-subtle flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+      <div class="flex items-center gap-3">
+        <div class="w-8 h-8 rounded-xl bg-terracotta text-white flex items-center justify-center text-sm shrink-0">
+          <i class="fa-solid fa-bell"></i>
+        </div>
+        <div>
+          <div class="flex items-center gap-1.5">
+            <span class="font-extrabold text-[10px] text-terracotta uppercase">Low Stock Alert</span>
+            <span class="text-red-700 bg-white px-2 py-0.2 rounded-full border border-red-200 text-[10px] font-bold">7.0 ml Left (7 Days)</span>
+          </div>
+          <p class="font-heading font-extrabold text-ink text-xs mt-0.5">
+            Minoxidil 5% Dropper Bottle is running low. Refill now so your 18-day streak isn't broken.
+          </p>
+        </div>
+      </div>
+
+      <button onclick="openReorderRefillModal('minoxidil')" class="px-3.5 py-2 rounded-xl bg-terracotta hover:bg-terracottaDark text-white font-heading font-extrabold text-xs shadow-sm transition flex items-center justify-center gap-1.5 shrink-0">
+        <i class="fa-solid fa-cart-shopping"></i>
+        <span>1-Tap Reorder Refill • ₹699</span>
+      </button>
+    </div>
+
+    <!-- ======================================================================= -->
+    <!-- VIEW 0: ALL TOPICS AT A GLANCE (MASTER SINGLE-WINDOW DASHBOARD)         -->
+    <!-- ======================================================================= -->
+    <section id="tab-overview" class="space-y-5">
+      
+      <!-- Top Overview Summary Bar -->
+      <div class="p-4 sm:p-5 rounded-3xl bg-white border border-oatBorder shadow-card flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <span class="text-[10px] font-extrabold uppercase tracking-wider text-herbal bg-herbalLight px-2.5 py-0.5 rounded-full border border-herbal/20">
+            Unified Care Command Center
+          </span>
+          <h1 class="text-xl sm:text-2xl font-heading font-extrabold text-ink mt-1">
+            Rahul's Day 42 Care Hub
+          </h1>
+          <p class="text-xs text-inkMuted mt-0.5">
+            Monitor daily doses, supply levels, photo milestones, bottle recycling, and consistency without switching pages.
+          </p>
+        </div>
+
+        <!-- Quick Metrics Pill Strip -->
+        <div class="flex flex-wrap items-center gap-2">
+          <div class="px-3 py-2 rounded-2xl bg-creamCard border border-oatBorder text-center min-w-[90px]">
+            <span class="text-[10px] font-bold text-inkMuted block">Today's Protocol</span>
+            <span id="overviewDoseProgressText" class="font-heading font-black text-sm text-ink">2 of 3 Done</span>
+          </div>
+          <div class="px-3 py-2 rounded-2xl bg-creamCard border border-oatBorder text-center min-w-[90px]">
+            <span class="text-[10px] font-bold text-inkMuted block">Active Streak</span>
+            <span class="font-heading font-black text-sm text-terracotta">18 Days 🔥</span>
+          </div>
+          <div class="px-3 py-2 rounded-2xl bg-creamCard border border-oatBorder text-center min-w-[90px]">
+            <span class="text-[10px] font-bold text-inkMuted block">Green Pouch</span>
+            <span class="font-heading font-black text-sm text-herbal">3 / 3 Ready</span>
+          </div>
+          <div class="px-3 py-2 rounded-2xl bg-creamCard border border-oatBorder text-center min-w-[90px]">
+            <span class="text-[10px] font-bold text-inkMuted block">Photo Review</span>
+            <span class="font-heading font-black text-sm text-amber-700">Day 45 Due</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- SIDE-BY-SIDE ROUTINE SNAPSHOT (AM SUN vs PM MOON) -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        
+        <!-- Morning Routine (AM) Card -->
+        <div class="rounded-3xl p-4 sm:p-5 bg-gradient-to-br from-amber-50/90 via-orange-50/40 to-white border-2 border-amber-200/90 shadow-card flex flex-col justify-between space-y-3">
+          <div>
+            <div class="flex items-center justify-between border-b border-amber-200/60 pb-2.5">
+              <div class="flex items-center gap-2">
+                <div class="w-8 h-8 rounded-xl bg-amber-400 text-amber-950 flex items-center justify-center text-sm shadow-sm">
+                  <i class="fa-solid fa-sun"></i>
+                </div>
+                <div>
+                  <h3 class="font-heading font-extrabold text-sm text-amber-950">Morning Routine (AM)</h3>
+                  <span class="text-[10px] text-amber-800 font-semibold">08:30 AM • Completed Today ✓</span>
+                </div>
+              </div>
+              <span class="px-2 py-0.5 rounded-full bg-herbalLight text-herbal font-extrabold text-[10px] border border-herbal/30">
+                All AM Doses Taken
+              </span>
+            </div>
+
+            <!-- Morning Products Mini-List -->
+            <div class="mt-3 space-y-2" id="overviewMorningList">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+
+          <div class="pt-2 flex items-center justify-between border-t border-amber-200/60 text-xs">
+            <span class="text-[11px] text-amber-900 font-medium">Biotin Gummies & Anti-Dandruff Cleanser</span>
+            <button onclick="switchTab('routine')" class="text-terracotta font-bold hover:underline flex items-center gap-1 text-[11px]">
+              <span>Customize AM</span>
+              <i class="fa-solid fa-arrow-right text-[10px]"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Night Routine (PM) Card (Deep Twilight Theme) -->
+        <div class="rounded-3xl p-4 sm:p-5 bg-gradient-to-br from-nightBg via-[#14202D] to-nightCard text-white border-2 border-slate-700 shadow-card flex flex-col justify-between space-y-3">
+          <div>
+            <div class="flex items-center justify-between border-b border-slate-700/80 pb-2.5">
+              <div class="flex items-center gap-2">
+                <div class="w-8 h-8 rounded-xl bg-amber-300 text-slate-950 flex items-center justify-center text-sm shadow-sm">
+                  <i class="fa-solid fa-moon"></i>
+                </div>
+                <div>
+                  <h3 class="font-heading font-extrabold text-sm text-white">Night Routine (PM)</h3>
+                  <span class="text-[10px] text-slate-300 font-semibold">10:00 PM • 1 Action Pending</span>
+                </div>
+              </div>
+              <span class="px-2 py-0.5 rounded-full bg-terracotta text-white font-extrabold text-[10px]">
+                Minoxidil Due
+              </span>
+            </div>
+
+            <!-- Night Products Mini-List -->
+            <div class="mt-3 space-y-2" id="overviewNightList">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+
+          <div class="pt-2 flex items-center justify-between border-t border-slate-700/80 text-xs">
+            <span class="text-[11px] text-slate-400">Minoxidil 5% Dropper (7.0ml) & DHT Blocker</span>
+            <button onclick="switchTab('routine')" class="text-amber-400 font-bold hover:underline flex items-center gap-1 text-[11px]">
+              <span>Full PM View</span>
+              <i class="fa-solid fa-arrow-right text-[10px]"></i>
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- 3-COLUMN COMPACT OVERVIEW GRID FOR OTHER MODULES (Single Window) -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        
+        <!-- Module 1: Green Eco-Pouch Status -->
+        <div class="p-4 sm:p-5 rounded-3xl bg-white border border-oatBorder shadow-card flex flex-col justify-between space-y-3">
+          <div>
+            <div class="flex items-center justify-between border-b border-oatBorder pb-2">
+              <span class="text-[10px] font-extrabold uppercase tracking-wider text-herbal">Eco-Pouch Recycling</span>
+              <span class="text-[10px] font-bold text-herbal bg-herbalLight px-2 py-0.2 rounded-full">Doorstep Handover Ready</span>
+            </div>
+            
+            <div class="mt-3 flex items-center gap-3">
+              <div class="w-12 h-12 rounded-2xl bg-herbalLight border border-herbal/30 flex items-center justify-center text-herbal text-xl shrink-0">
+                <i class="fa-solid fa-recycle"></i>
+              </div>
+              <div>
+                <h4 class="font-heading font-black text-lg text-ink">3 / 3 Bottles</h4>
+                <p class="text-[11px] text-inkMuted">Pouch full • Free Trial Gift unlocked for your refill</p>
+              </div>
+            </div>
+
+            <p class="text-[11px] text-inkMuted mt-2 leading-relaxed">
+              Hand over the sealed pouch to the delivery partner when your refill arrives. Discrete, private & zero store visits.
+            </p>
+          </div>
+
+          <button onclick="switchTab('recycling')" class="w-full py-2 rounded-xl bg-herbal hover:bg-herbalDark text-white text-xs font-heading font-extrabold transition">
+            View Eco-Pouch Hub & Gifts
+          </button>
+        </div>
+
+        <!-- Module 2: 15-Day Photo Proof & Alignment -->
+        <div class="p-4 sm:p-5 rounded-3xl bg-white border border-oatBorder shadow-card flex flex-col justify-between space-y-3">
+          <div>
+            <div class="flex items-center justify-between border-b border-oatBorder pb-2">
+              <span class="text-[10px] font-extrabold uppercase tracking-wider text-amber-800">15-Day Scalp Journal</span>
+              <span class="text-[10px] font-bold text-amber-800 bg-amber-100 px-2 py-0.2 rounded-full">Day 45 Due Tomorrow</span>
+            </div>
+
+            <div class="mt-3 flex items-center gap-3">
+              <div class="w-12 h-12 rounded-2xl bg-amber-100 border border-amber-300 flex items-center justify-center text-amberGlass text-xl shrink-0 overflow-hidden relative">
+                <img src="https://images.unsplash.com/photo-1585747860715-2ba37e788b70?w=100&h=100&fit=crop" class="w-full h-full object-cover">
+              </div>
+              <div>
+                <h4 class="font-heading font-bold text-sm text-ink">Review #3: Day 45</h4>
+                <p class="text-[11px] text-inkMuted">Baseline (01 Sep) vs Day 45 comparison</p>
+              </div>
+            </div>
+
+            <p class="text-[11px] text-inkMuted mt-2 leading-relaxed">
+              Dr. Rohan evaluates your follicular reactivation and provides reassurance against temporary shedding.
+            </p>
+          </div>
+
+          <button onclick="switchTab('journal')" class="w-full py-2 rounded-xl bg-ink hover:bg-inkLight text-white text-xs font-heading font-extrabold transition">
+            Open Photo Journal & Slider
+          </button>
+        </div>
+
+        <!-- Module 3: Dr. Rohan AI Quick Consult -->
+        <div class="p-4 sm:p-5 rounded-3xl bg-white border border-oatBorder shadow-card flex flex-col justify-between space-y-3">
+          <div>
+            <div class="flex items-center justify-between border-b border-oatBorder pb-2">
+              <span class="text-[10px] font-extrabold uppercase tracking-wider text-terracotta">Dr. Rohan AI Coach</span>
+              <span class="text-[10px] font-bold text-herbal bg-herbalLight px-2 py-0.2 rounded-full">Online</span>
+            </div>
+
+            <div class="mt-3 flex items-center gap-3">
+              <div class="w-12 h-12 rounded-2xl bg-creamCard border border-oatBorder flex items-center justify-center text-ink text-base font-bold shrink-0">
+                DR
+              </div>
+              <div>
+                <h4 class="font-heading font-bold text-sm text-ink">Personalized Routine Advice</h4>
+                <p class="text-[11px] text-inkMuted">Synced with your Day 42 schedule</p>
+              </div>
+            </div>
+
+            <div class="mt-2 p-2.5 rounded-xl bg-creamCard border border-oatBorder text-[11px] text-ink leading-relaxed">
+              "Week 6 shedding is a positive sign that resting hairs are making room for fresh growth!"
+            </div>
+          </div>
+
+          <button onclick="switchTab('assistant')" class="w-full py-2 rounded-xl bg-creamCard hover:bg-oatBorder border border-oatBorder text-ink text-xs font-heading font-bold transition">
+            Ask Dr. Rohan a Question
+          </button>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- ======================================================================= -->
+    <!-- VIEW 1: DAILY ROUTINE (DISTINGUISHED MORNING VS NIGHT)                  -->
+    <!-- ======================================================================= -->
+    <section id="tab-routine" class="hidden space-y-5">
+
+      <!-- Routine Header with Edit Routine Action -->
+      <div class="rounded-3xl bg-white border border-oatBorder p-5 sm:p-6 shadow-card flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div class="space-y-1">
+          <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-herbalLight text-herbal text-[11px] font-bold border border-herbal/30">
+            <i class="fa-solid fa-check"></i> 18-Day Streak Active • 1 Grace Day Protected
+          </div>
+          <h2 class="text-xl sm:text-2xl font-heading font-extrabold text-ink">
+            Daily Care Routine (AM & PM)
+          </h2>
+          <p class="text-xs text-inkMuted max-w-xl">
+            Clearly separated into Morning and Night protocols. Tapping <strong>Take Dose</strong> automatically deducts volume from your calibrated bottles, plays harmonic chimes, and updates your streak.
+          </p>
+        </div>
+
+        <div class="flex items-center gap-3 shrink-0">
+          <button onclick="openRoutineEditorModal()" class="px-4 py-2.5 rounded-2xl bg-creamCard hover:bg-oatBorder border border-oatBorder text-ink text-xs font-heading font-bold shadow-subtle flex items-center gap-2 transition">
+            <i class="fa-solid fa-pen-to-square text-terracotta"></i>
+            <span>Edit Routine Protocol</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- SIDE-BY-SIDE AM & PM SECTIONS -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+
+        <!-- =================================================================== -->
+        <!-- MORNING ROUTINE (AM) - SUNRISE WARM GOLDEN THEME                    -->
+        <!-- =================================================================== -->
+        <div class="rounded-3xl p-5 sm:p-6 bg-gradient-to-br from-amber-50/90 via-orange-50/40 to-white border-2 border-amber-200/90 shadow-card space-y-4">
+          
+          <!-- Morning Header -->
+          <div class="flex items-center justify-between border-b border-amber-200/70 pb-3">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-2xl bg-amber-400 text-amber-950 flex items-center justify-center text-lg shadow-sm">
+                <i class="fa-solid fa-sun"></i>
+              </div>
+              <div>
+                <h3 class="font-heading font-extrabold text-base text-amber-950">Morning Routine (AM)</h3>
+                <p class="text-[11px] text-amber-800 font-medium">Scheduled for 08:30 AM • Post Breakfast</p>
+              </div>
+            </div>
+
+            <span class="px-2.5 py-1 rounded-full bg-amber-100 text-amber-900 border border-amber-300 text-[10px] font-extrabold uppercase">
+              Sunrise Protocol
+            </span>
+          </div>
+
+          <!-- Morning Product Cards Container -->
+          <div class="space-y-3" id="morningProductsList">
+            <!-- Populated via JS -->
+          </div>
+
+        </div>
+
+        <!-- =================================================================== -->
+        <!-- NIGHT ROUTINE (PM) - TWILIGHT DEEP SLATE & CRESCENT MOON THEME       -->
+        <!-- =================================================================== -->
+        <div class="rounded-3xl p-5 sm:p-6 bg-gradient-to-br from-nightBg via-[#14202D] to-nightCard text-white border-2 border-slate-700 shadow-card space-y-4">
+          
+          <!-- Night Header -->
+          <div class="flex items-center justify-between border-b border-slate-700/80 pb-3">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-2xl bg-amber-300 text-slate-950 flex items-center justify-center text-lg shadow-sm">
+                <i class="fa-solid fa-moon"></i>
+              </div>
+              <div>
+                <h3 class="font-heading font-extrabold text-base text-white">Night Routine (PM)</h3>
+                <p class="text-[11px] text-slate-300 font-medium">Scheduled for 10:00 PM • Pre Bedtime</p>
+              </div>
+            </div>
+
+            <span class="px-2.5 py-1 rounded-full bg-slate-800 text-amber-300 border border-slate-600 text-[10px] font-extrabold uppercase">
+              Twilight Protocol
+            </span>
+          </div>
+
+          <!-- Night Product Cards Container -->
+          <div class="space-y-3" id="nightProductsList">
+            <!-- Populated via JS -->
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- ======================================================================= -->
+    <!-- VIEW 2: ECO-POUCH RECYCLING & REWARDS                                   -->
+    <!-- ======================================================================= -->
+    <section id="tab-recycling" class="hidden space-y-5">
+      
+      <div class="rounded-3xl bg-herbalLight border border-herbal/30 p-5 sm:p-6 shadow-card flex flex-col md:flex-row md:items-center justify-between gap-5">
+        <div class="space-y-1.5 max-w-xl">
+          <div class="inline-flex items-center gap-2 px-3 py-0.5 rounded-full bg-white text-herbal text-[11px] font-bold border border-herbal/30">
+            <i class="fa-solid fa-leaf"></i> Zero-Waste Recycling & Doorstep Handover
+          </div>
+          <h2 class="text-xl sm:text-2xl font-heading font-extrabold text-ink">
+            Green Eco-Pouch Bottle Recycling
+          </h2>
+          <p class="text-xs text-inkMuted leading-relaxed">
+            Keep empty dropper bottles and tubs in your sealed Green Zip Pouch. Hand it over to the delivery partner when your refill arrives. It's completely private, requires no pharmacy visits, and earns you a complimentary discovery gift!
+          </p>
+        </div>
+
+        <div class="bg-white rounded-2xl p-4 border border-herbal/30 shadow-subtle shrink-0 text-center min-w-[200px]">
+          <span class="text-[10px] font-bold uppercase tracking-wider text-inkMuted block">Pouch Capacity</span>
+          <div class="text-2xl font-heading font-black text-herbal my-0.5" id="pouchCapacityText">3 / 3 Containers</div>
+          <span class="inline-block px-2.5 py-0.5 rounded-full bg-herbal text-white text-[10px] font-bold">
+            ✓ Ready for Handover
+          </span>
+        </div>
+      </div>
+
+      <!-- 4-Step Process Strip -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+        <div class="p-3.5 rounded-2xl bg-white border border-oatBorder space-y-1">
+          <span class="w-6 h-6 rounded-lg bg-ink text-white font-heading font-bold text-xs flex items-center justify-center">1</span>
+          <h4 class="font-heading font-bold text-xs text-ink">Save Empties</h4>
+          <p class="text-[11px] text-inkMuted leading-relaxed">Drop finished bottles or tubs into the opaque Green Zip Pouch.</p>
+        </div>
+
+        <div class="p-3.5 rounded-2xl bg-white border border-oatBorder space-y-1">
+          <span class="w-6 h-6 rounded-lg bg-ink text-white font-heading font-bold text-xs flex items-center justify-center">2</span>
+          <h4 class="font-heading font-bold text-xs text-ink">Reach 3 Containers</h4>
+          <p class="text-[11px] text-inkMuted leading-relaxed">Collect 3 containers to optimize delivery pickup logistics.</p>
+        </div>
+
+        <div class="p-3.5 rounded-2xl bg-white border border-oatBorder space-y-1">
+          <span class="w-6 h-6 rounded-lg bg-herbal text-white font-heading font-bold text-xs flex items-center justify-center">3</span>
+          <h4 class="font-heading font-bold text-xs text-ink">Doorstep Handover</h4>
+          <p class="text-[11px] text-inkMuted leading-relaxed">Hand the sealed pouch to the rider during your next refill. 100% discrete.</p>
+        </div>
+
+        <div class="p-3.5 rounded-2xl bg-white border border-oatBorder space-y-1">
+          <span class="w-6 h-6 rounded-lg bg-terracotta text-white font-heading font-bold text-xs flex items-center justify-center">4</span>
+          <h4 class="font-heading font-bold text-xs text-ink">Free Sample Gift</h4>
+          <p class="text-[11px] text-inkMuted leading-relaxed">A complimentary trial sample is automatically packed inside your incoming refill box.</p>
+        </div>
+      </div>
+
+      <!-- 3 Pouch Visual Slots -->
+      <div class="p-5 sm:p-6 rounded-3xl bg-white border border-oatBorder shadow-card space-y-4">
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 class="font-heading font-bold text-sm sm:text-base text-ink">Your Green Zip Pouch Inventory</h3>
+            <p class="text-[11px] text-inkMuted">Containers currently inside your pouch</p>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <button onclick="openAddPouchEmptyModal()" class="px-3 py-1.5 rounded-xl bg-creamCard hover:bg-oatBorder border border-oatBorder text-ink text-xs font-bold transition">
+              + Add Empty
+            </button>
+            <button onclick="openPouchVerifyModal()" class="px-3 py-1.5 rounded-xl bg-ink hover:bg-inkLight text-white text-xs font-heading font-bold transition">
+              Verify Photo
+            </button>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4" id="pouchVisualSlotsGrid">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <!-- Discovery Sample Reward Card -->
+      <div class="p-4 sm:p-5 rounded-3xl bg-white border-2 border-terracotta/40 shadow-card flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-2xl bg-terracottaLight text-terracotta flex items-center justify-center text-lg shrink-0">
+            <i class="fa-solid fa-gift"></i>
+          </div>
+          <div>
+            <span class="text-[10px] font-extrabold uppercase text-terracotta">Recycling Reward</span>
+            <h4 class="font-heading font-bold text-sm text-ink">Select Your Free Discovery Trial Sample</h4>
+            <p class="text-[11px] text-inkMuted">Shipped complimentary with your upcoming refill order.</p>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2 shrink-0">
+          <select id="discoverySampleSelect" class="bg-creamCard border border-oatBorder text-ink text-xs font-bold rounded-xl px-2.5 py-2 outline-none">
+            <option value="beard">Redensyl 3% Beard Tonic (15ml)</option>
+            <option value="wash">Salicylic 2% Face Cleanser (30ml)</option>
+            <option value="sleep">Melatonin Deep Sleep Strips (10pk)</option>
+          </select>
+          <button onclick="claimDiscoverySample()" class="px-4 py-2 rounded-xl bg-ink hover:bg-inkLight text-white text-xs font-heading font-extrabold transition">
+            Claim Gift
+          </button>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ======================================================================= -->
+    <!-- VIEW 3: BOTTLES & SUPPLY                                                -->
+    <!-- ======================================================================= -->
+    <section id="tab-supply" class="hidden space-y-5">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div>
+          <h2 class="text-xl sm:text-2xl font-heading font-extrabold text-ink">Treatment Supply & Packaging Telemetry</h2>
+          <p class="text-xs text-inkMuted">
+            Milliliters and pill counts update automatically as doses are taken. No manual editing required.
+          </p>
+        </div>
+        <button onclick="openRoutineEditorModal()" class="px-3.5 py-2 rounded-xl bg-white hover:bg-creamCard border border-oatBorder text-ink text-xs font-bold transition self-start sm:self-auto">
+          Manage Routine Habits
+        </button>
+      </div>
+
+      <div id="supplyCardsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <!-- Rendered via JS -->
+      </div>
+    </section>
+
+    <!-- ======================================================================= -->
+    <!-- VIEW 4: 15-DAY PHOTO PROOF & SLIDER                                     -->
+    <!-- ======================================================================= -->
+    <section id="tab-journal" class="hidden space-y-5">
+      
+      <div class="rounded-3xl bg-white border border-oatBorder p-5 sm:p-6 shadow-card flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <span class="text-[10px] font-extrabold uppercase tracking-wider text-herbal bg-herbalLight px-2 py-0.5 rounded-full border border-herbal/20">
+            Photobiological Review
+          </span>
+          <h2 class="text-xl sm:text-2xl font-heading font-extrabold text-ink mt-1">15-Day Progress Photo Proof</h2>
+          <p class="text-xs text-inkMuted">Standardized visual progress logs eliminate mirror anxiety.</p>
+        </div>
+
+        <div class="p-3 rounded-2xl bg-creamCard border border-oatBorder text-xs text-ink space-y-1">
+          <div class="text-[10px] text-inkMuted uppercase font-extrabold">Day 0 Baseline</div>
+          <div class="font-heading font-black text-ink text-sm" id="journalDay0Text">01 Sep 2026</div>
+          <button onclick="openDay0EditorModal()" class="text-[10px] text-terracotta font-bold hover:underline">Change Date</button>
+        </div>
+      </div>
+
+      <!-- 15-Day Timeline Ribbon -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2" id="photoMilestonesRibbon">
+        <!-- Populated via JS -->
+      </div>
+
+      <!-- Photo Upload & AI Evaluation -->
+      <div class="p-5 sm:p-6 rounded-3xl bg-white border border-oatBorder shadow-card space-y-4">
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-5 items-center">
+          
+          <div class="md:col-span-5 relative w-full h-56 sm:h-64 rounded-2xl bg-ink overflow-hidden border border-oatBorder flex items-center justify-center">
+            <img id="scalpPhotoPreview" src="https://images.unsplash.com/photo-1585747860715-2ba37e788b70?w=600&h=600&fit=crop" class="w-full h-full object-cover">
+            
+            <div id="hairlineGuideOverlay" class="absolute inset-0 pointer-events-none flex flex-col items-center justify-center opacity-70">
+              <svg class="w-36 h-36 text-white/70" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="1.5" stroke-dasharray="3 3">
+                <path d="M 20 80 Q 50 15 80 80" />
+                <circle cx="50" cy="40" r="14" />
+              </svg>
+              <span class="text-[9px] text-white bg-ink/80 px-2 py-0.5 rounded-full mt-1">Hairline Silhouette Guide</span>
+            </div>
+
+            <button onclick="toggleHairlineGuide()" class="absolute bottom-2 right-2 bg-ink/80 text-white text-[9px] font-bold px-2 py-0.5 rounded-lg">
+              Toggle Guide
+            </button>
+          </div>
+
+          <div class="md:col-span-7 space-y-3">
+            <div>
+              <span class="text-[10px] font-bold text-amber-900 bg-amber-100 px-2 py-0.2 rounded-full border border-amber-300">
+                Next Review: Day 45 (Due Tomorrow)
+              </span>
+              <h3 class="font-heading font-extrabold text-base text-ink mt-1">Capture Day 45 Scalp Review</h3>
+              <p class="text-xs text-inkMuted leading-relaxed">
+                Snap under consistent lighting using the silhouette guide to verify follicle stabilization.
+              </p>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-2">
+              <input type="file" id="scalpPhotoFileInput" accept="image/*" class="hidden" onchange="handleScalpPhotoUpload(event)">
+              <button onclick="document.getElementById('scalpPhotoFileInput').click()" class="px-3.5 py-2 rounded-xl bg-creamCard hover:bg-oatBorder border border-oatBorder text-ink text-xs font-bold transition">
+                <i class="fa-solid fa-camera text-terracotta mr-1"></i> Choose Photo
+              </button>
+              <button onclick="evaluateMilestoneWithGemini()" id="btnGenerateReport" class="px-4 py-2 rounded-xl bg-ink hover:bg-inkLight text-white text-xs font-heading font-extrabold transition">
+                <i class="fa-solid fa-wand-magic-sparkles text-terracotta mr-1"></i> Run AI Evaluation
+              </button>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- AI Progress Evaluation Output -->
+        <div id="aiEvaluationCard" class="hidden p-4 rounded-2xl bg-creamCard border border-herbal/30 space-y-2">
+          <div class="flex items-center justify-between border-b border-oatBorder pb-2">
+            <h4 class="font-heading font-bold text-xs text-ink">Dr. Rohan's Day 45 Review</h4>
+            <span class="text-[10px] text-herbal font-bold">Follicles Transitioning on Schedule</span>
+          </div>
+          <div id="aiEvaluationContent" class="text-xs text-ink leading-relaxed space-y-1.5"></div>
+        </div>
+      </div>
+
+      <!-- Before/After Split Slider -->
+      <div class="p-5 sm:p-6 rounded-3xl bg-white border border-oatBorder shadow-card space-y-3">
+        <div class="flex items-center justify-between">
+          <h3 class="font-heading font-bold text-sm text-ink">Baseline vs Day 45 Density Slider</h3>
+          <span class="text-[11px] text-inkMuted">Drag slider to compare</span>
+        </div>
+
+        <div class="relative w-full h-64 sm:h-80 rounded-2xl overflow-hidden select-none bg-slate-900 border border-oatBorder" id="sliderStage">
+          <img src="https://images.unsplash.com/photo-1585747860715-2ba37e788b70?w=800&h=600&fit=crop" class="absolute inset-0 w-full h-full object-cover">
+          <div class="absolute top-3 right-3 bg-ink/80 text-white text-[10px] font-bold px-2 py-0.5 rounded-full z-10">
+            Day 45
+          </div>
+
+          <div id="sliderBeforeClip" class="absolute inset-0 overflow-hidden" style="width: 50%;">
+            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&h=600&fit=crop" class="absolute inset-0 w-full h-full object-cover max-w-none">
+            <div class="absolute top-3 left-3 bg-terracotta text-white text-[10px] font-bold px-2 py-0.5 rounded-full z-10">
+              Day 0 Baseline
+            </div>
+          </div>
+
+          <div id="sliderHandle" class="absolute top-0 bottom-0 w-1 bg-white cursor-ew-resize z-20 flex items-center justify-center" style="left: 50%;">
+            <div class="w-8 h-8 rounded-full bg-white shadow-elevated border-2 border-ink flex items-center justify-center text-ink text-[10px] font-bold">
+              <i class="fa-solid fa-arrows-left-right"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ======================================================================= -->
+    <!-- VIEW 5: CONSISTENCY, STREAKS & CALENDAR                                 -->
+    <!-- ======================================================================= -->
+    <section id="tab-tracker" class="hidden space-y-5">
+      
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div>
+          <h2 class="text-xl sm:text-2xl font-heading font-extrabold text-ink">Consistency & Streak Protection</h2>
+          <p class="text-xs text-inkMuted">
+            1 Grace Day per week shields your streak from an occasional accidental miss.
+          </p>
+        </div>
+
+        <div class="flex items-center gap-2 bg-white px-3 py-1.5 rounded-xl border border-oatBorder text-xs">
+          <span class="flex items-center gap-1 text-herbal font-bold"><i class="fa-solid fa-check"></i> Completed</span>
+          <span class="text-inkMuted">•</span>
+          <span class="flex items-center gap-1 text-blue-700 font-bold"><i class="fa-solid fa-shield-halved"></i> Grace Used</span>
+        </div>
+      </div>
+
+      <!-- Current Week Strip -->
+      <div class="p-4 sm:p-5 rounded-3xl bg-white border border-oatBorder shadow-card space-y-2">
+        <span class="text-xs font-bold text-ink uppercase tracking-wider block">Current Week Progress</span>
+        <div class="grid grid-cols-7 gap-2" id="trackerWeekStrip">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <!-- Monthly Calendar -->
+      <div class="p-5 sm:p-6 rounded-3xl bg-white border border-oatBorder shadow-card space-y-4">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <button onclick="navigateTrackerMonth(-1)" class="w-8 h-8 rounded-lg bg-creamCard border border-oatBorder flex items-center justify-center text-xs">
+              <i class="fa-solid fa-chevron-left"></i>
+            </button>
+            <h3 class="font-heading font-extrabold text-sm sm:text-base text-ink" id="trackerMonthLabel">October 2026</h3>
+            <button onclick="navigateTrackerMonth(1)" class="w-8 h-8 rounded-lg bg-creamCard border border-oatBorder flex items-center justify-center text-xs">
+              <i class="fa-solid fa-chevron-right"></i>
+            </button>
+          </div>
+          <span class="text-[11px] text-inkMuted">Tap any past date to toggle missed logs</span>
+        </div>
+
+        <div class="grid grid-cols-7 gap-1.5 text-center text-[10px] font-bold text-inkMuted uppercase">
+          <div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div><div>Sun</div>
+        </div>
+
+        <div class="grid grid-cols-7 gap-1.5" id="monthlyTrackerMatrix">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ======================================================================= -->
+    <!-- VIEW 6: DR. ROHAN AI ASSISTANT                                          -->
+    <!-- ======================================================================= -->
+    <section id="tab-assistant" class="hidden space-y-4">
+      
+      <div class="rounded-3xl bg-white border border-oatBorder p-5 sm:p-6 shadow-card flex items-center justify-between gap-4">
+        <div>
+          <span class="text-[10px] font-extrabold uppercase text-terracotta bg-terracottaLight px-2 py-0.5 rounded-full border border-terracotta/20">
+            24/7 Clinical Care Companion
+          </span>
+          <h2 class="text-xl sm:text-2xl font-heading font-extrabold text-ink mt-1">Ask Dr. Rohan</h2>
+          <p class="text-xs text-inkMuted">Jargon-free answers regarding shedding, application timings, and habit consistency.</p>
+        </div>
+
+        <div class="flex items-center gap-2.5 bg-creamCard px-3 py-2 rounded-2xl border border-oatBorder shrink-0">
+          <div class="w-8 h-8 rounded-full bg-herbal text-white flex items-center justify-center text-xs font-bold">DR</div>
+          <div class="text-left text-xs hidden sm:block">
+            <span class="font-bold text-ink block">Dr. Rohan</span>
+            <span class="text-[10px] text-herbal">Day 42 Plan Synced</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Chips -->
+      <div class="flex flex-wrap items-center gap-1.5 text-xs">
+        <span class="text-[11px] font-bold text-inkMuted mr-1">Quick Ask:</span>
+        <button onclick="askPresetQuestion('Is shedding normal during Week 6 of Minoxidil?')" class="px-3 py-1 rounded-full bg-white hover:bg-creamCard border border-oatBorder text-ink text-[11px] font-semibold transition">
+          Is Week 6 shedding normal?
+        </button>
+        <button onclick="askPresetQuestion('Can I apply Minoxidil on damp hair right after a shower?')" class="px-3 py-1 rounded-full bg-white hover:bg-creamCard border border-oatBorder text-ink text-[11px] font-semibold transition">
+          Apply on damp hair?
+        </button>
+        <button onclick="askPresetQuestion('I forgot my dose yesterday. How does my Grace Day protect my streak?')" class="px-3 py-1 rounded-full bg-white hover:bg-creamCard border border-oatBorder text-ink text-[11px] font-semibold transition">
+          How does Grace Day work?
+        </button>
+        <button onclick="askPresetQuestion('How do I hand over my empty Green Zip Pouch to the courier?')" class="px-3 py-1 rounded-full bg-white hover:bg-creamCard border border-oatBorder text-ink text-[11px] font-semibold transition">
+          Eco-Pouch pickup steps
+        </button>
+      </div>
+
+      <!-- Chat Box -->
+      <div class="rounded-3xl bg-white border border-oatBorder shadow-card overflow-hidden flex flex-col h-[460px]">
+        <div id="assistantChatMessages" class="flex-1 p-4 sm:p-5 overflow-y-auto space-y-3">
+          <div class="flex items-start gap-2.5 max-w-xl">
+            <div class="w-7 h-7 rounded-full bg-herbal text-white flex items-center justify-center text-xs font-bold shrink-0">DR</div>
+            <div class="bg-creamCard p-3.5 rounded-2xl rounded-tl-sm text-xs sm:text-sm text-ink leading-relaxed space-y-1.5">
+              <p>Hey Rahul! I'm <strong>Dr. Rohan</strong>, your care coach at Man Matters.</p>
+              <p>You're on <strong>Day 42 (Week 6)</strong> of your routine. This is the exact transition window where loose hairs shed to make room for stronger roots. What can I answer for you today?</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="p-3 bg-oat border-t border-oatBorder flex items-center gap-2">
+          <input type="text" id="assistantUserInput" placeholder="Ask about dosages, shedding, or routines..." class="flex-1 bg-white border border-oatBorder rounded-xl px-3 py-2 text-xs outline-none focus:border-terracotta" onkeypress="if(event.key === 'Enter') sendAssistantQuery()">
+          <button onclick="sendAssistantQuery()" class="px-4 py-2 rounded-xl bg-ink hover:bg-inkLight text-white font-heading font-extrabold text-xs transition">
+            Send
+          </button>
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- ========================================================================= -->
+  <!-- MODALS (SHEDDING GUIDE, 1-TAP REORDER, WHATSAPP, ROUTINE EDITOR)          -->
+  <!-- ========================================================================= -->
+
+  <!-- 1. SHEDDING GUIDE MODAL -->
+  <div id="sheddingGuideModal" class="fixed inset-0 z-50 bg-ink/60 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-xl w-full p-6 shadow-elevated space-y-5 border border-oatBorder">
+      <div class="flex items-center justify-between border-b border-oatBorder pb-3">
+        <div class="flex items-center gap-2.5">
+          <div class="w-9 h-9 rounded-xl bg-amber-100 text-amberGlass flex items-center justify-center text-base font-bold">
+            <i class="fa-solid fa-hand-holding-heart"></i>
+          </div>
+          <div>
+            <h3 class="font-heading font-extrabold text-base sm:text-lg text-ink">Why Shedding is Normal</h3>
+            <p class="text-xs text-inkMuted">The science behind Weeks 3 to 8</p>
+          </div>
+        </div>
+        <button onclick="closeSheddingGuideModal()" class="w-7 h-7 rounded-full bg-creamCard flex items-center justify-center text-xs">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <div class="space-y-3 text-xs sm:text-sm text-ink leading-relaxed">
+        <div class="p-3.5 rounded-2xl bg-amber-50 border border-amber-200 text-amber-900">
+          <strong>Follicle Reactivation:</strong> Hair roots cycle through Growth, Rest, and Shedding phases. When Minoxidil stimulates micro-circulation, dormant resting hairs shed simultaneously so active anagen roots can grow in thicker.
+        </div>
+
+        <div class="grid grid-cols-3 gap-2 text-center text-xs">
+          <div class="p-2.5 rounded-xl bg-creamCard border border-oatBorder">
+            <span class="text-[9px] font-extrabold uppercase text-inkMuted">Wks 1-3</span>
+            <div class="font-bold text-ink">Activation</div>
+          </div>
+          <div class="p-2.5 rounded-xl bg-amber-100 border border-amber-300">
+            <span class="text-[9px] font-extrabold uppercase text-amber-900">Wks 3-8 (Active)</span>
+            <div class="font-bold text-amber-900">Shedding</div>
+          </div>
+          <div class="p-2.5 rounded-xl bg-herbalLight border border-herbal/30">
+            <span class="text-[9px] font-extrabold uppercase text-herbal">Wks 9+</span>
+            <div class="font-bold text-herbal">Regrowth</div>
+          </div>
+        </div>
+      </div>
+
+      <button onclick="closeSheddingGuideModal()" class="w-full py-2.5 rounded-xl bg-ink text-white font-heading font-extrabold text-xs transition">
+        Got It • Keep My Routine Going
+      </button>
+    </div>
+  </div>
+
+  <!-- 2. 1-TAP REORDER REFILL MODAL -->
+  <div id="reorderRefillModal" class="fixed inset-0 z-50 bg-ink/60 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-elevated space-y-4 border border-oatBorder">
+      <div class="flex items-center justify-between border-b border-oatBorder pb-3">
+        <div class="flex items-center gap-2.5">
+          <div class="w-9 h-9 rounded-xl bg-terracottaLight text-terracotta flex items-center justify-center text-base font-bold">
+            <i class="fa-solid fa-cart-shopping"></i>
+          </div>
+          <div>
+            <h3 class="font-heading font-extrabold text-base text-ink">1-Tap Reorder Refill</h3>
+            <p class="text-xs text-inkMuted">Refill and reset your bottle level</p>
+          </div>
+        </div>
+        <button onclick="closeReorderRefillModal()" class="w-7 h-7 rounded-full bg-creamCard flex items-center justify-center text-xs">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <div class="p-3.5 rounded-2xl bg-creamCard border border-oatBorder flex items-center justify-between">
+        <div>
+          <span class="text-[9px] font-extrabold uppercase text-inkMuted">Item Refill</span>
+          <h4 id="refillModalProductName" class="font-heading font-bold text-xs text-ink">Minoxidil 5% Solution (60ml)</h4>
+          <p class="text-[11px] text-inkMuted">60-Day Supply with Pipette</p>
+        </div>
+        <div class="text-right">
+          <span class="text-xs text-inkMuted line-through">₹899</span>
+          <div class="text-base font-heading font-extrabold text-ink">₹699</div>
+        </div>
+      </div>
+
+      <div class="space-y-2 text-xs text-ink">
+        <div class="flex items-center justify-between py-1 border-b border-oatBorder">
+          <span class="text-inkMuted">Delivery Address:</span>
+          <span class="font-bold text-ink">Bandra West, Mumbai</span>
+        </div>
+        <div class="flex items-center justify-between py-1 border-b border-oatBorder">
+          <span class="text-inkMuted">Delivery Window:</span>
+          <span class="font-bold text-herbal">48 Hours Express</span>
+        </div>
+        <div class="p-2.5 rounded-xl bg-herbalLight border border-herbal/20 flex items-center gap-2">
+          <input type="checkbox" id="courierPouchHandoverCheck" checked class="accent-herbal w-4 h-4 rounded">
+          <label for="courierPouchHandoverCheck" class="text-[11px] text-herbal font-semibold cursor-pointer">
+            Hand over Green Zip Pouch (3 empties) to rider during this delivery
+          </label>
+        </div>
+      </div>
+
+      <button onclick="executeRefillOrder()" class="w-full py-3 rounded-2xl bg-terracotta hover:bg-terracottaDark text-white font-heading font-extrabold text-xs shadow-md transition flex items-center justify-center gap-2">
+        <i class="fa-solid fa-truck-fast"></i>
+        <span>Confirm Refill & Reset Bottle Level (₹699)</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- 3. WHATSAPP SIMULATED BOT MODAL -->
+  <div id="whatsAppModal" class="fixed inset-0 z-50 bg-ink/60 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="bg-[#ECE5DD] rounded-3xl max-w-sm w-full overflow-hidden shadow-elevated border border-ink/20 flex flex-col h-[520px]">
+      <div class="bg-[#075E54] text-white p-3 flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-full bg-white flex items-center justify-center text-ink font-bold text-xs shrink-0">
+            <span class="font-heading font-extrabold text-ink">m</span>
+          </div>
+          <div>
+            <div class="flex items-center gap-1">
+              <span class="font-bold text-xs">Man Matters Care Bot</span>
+              <i class="fa-solid fa-circle-check text-[10px] text-[#25D366]"></i>
+            </div>
+            <span class="text-[9px] text-white/80">Verified Channel • Online</span>
+          </div>
+        </div>
+        <button onclick="closeWhatsAppModal()" class="text-white hover:text-white/80 text-xs">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <div class="flex-1 p-3.5 overflow-y-auto space-y-3 text-xs leading-relaxed" id="whatsappChatBody">
+        <div class="text-center">
+          <span class="bg-[#E1F3FB] text-[#4A4A4A] text-[9px] font-semibold px-2 py-0.5 rounded shadow-sm">
+            Today • 10:00 PM
+          </span>
+        </div>
+
+        <div class="bg-white p-3 rounded-2xl rounded-tl-sm shadow-sm space-y-1.5 max-w-[90%]">
+          <p class="text-ink">
+            Hey <strong>Rahul</strong>! 🌿 Time for your <strong>Night Routine</strong>:
+          </p>
+          <div class="p-2 rounded-xl bg-amber-50 border border-amber-200 text-[11px] text-ink font-medium">
+            🧴 <strong>1.0 ml Minoxidil 5%</strong> on dry scalp.<br>
+            Current Bottle: <span id="waBottleStatusText">7.0 ml remaining (7 Days left)</span>
+          </div>
+          <p class="text-[10px] text-inkMuted">
+            Tap below to record your dose. Deducts 1.0 ml from your digital bottle and protects your 18-day streak!
+          </p>
+          <span class="text-[8px] text-right block text-inkMuted">10:00 PM ✓✓</span>
+        </div>
+
+        <div class="space-y-1.5 pt-1" id="waActionButtons">
+          <button onclick="executeWhatsAppDoseLog()" class="w-full py-2 px-3 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 text-[#075E54] font-bold text-xs shadow-sm flex items-center justify-center gap-1.5 transition">
+            <i class="fa-solid fa-circle-check text-herbal"></i>
+            <span>Mark Done (Log 1.0 ml) ✓</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="bg-[#F0F0F0] p-2 flex items-center gap-2 border-t border-slate-200">
+        <div class="flex-1 bg-white rounded-full px-3 py-1.5 text-xs text-inkMuted">Type a message...</div>
+        <div class="w-7 h-7 rounded-full bg-[#075E54] text-white flex items-center justify-center text-xs">
+          <i class="fa-solid fa-microphone"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. ROUTINE EDITOR MODAL (CUSTOMIZE HABITS) -->
+  <div id="routineEditorModal" class="fixed inset-0 z-50 bg-ink/60 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-elevated space-y-4 max-h-[88vh] overflow-y-auto border border-oatBorder">
+      <div class="flex items-center justify-between border-b border-oatBorder pb-3">
+        <h3 class="font-heading font-extrabold text-base text-ink">Customize Daily Routine (AM & PM)</h3>
+        <button onclick="closeRoutineEditorModal()" class="w-7 h-7 rounded-full bg-creamCard flex items-center justify-center text-xs">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <div class="space-y-2.5" id="routineEditorItemsList">
+        <!-- Rendered by JS -->
+      </div>
+
+      <div class="p-3.5 rounded-2xl bg-creamCard border border-oatBorder space-y-2.5">
+        <span class="font-heading font-bold text-[11px] uppercase tracking-wider text-ink block">+ Add Product or Self-Care Habit</span>
+        <div class="grid grid-cols-2 gap-2 text-xs">
+          <input type="text" id="newHabitName" placeholder="Habit/Product Name" class="col-span-2 bg-white border border-oatBorder rounded-xl p-2 outline-none">
+          <select id="newHabitSlot" class="bg-white border border-oatBorder rounded-xl p-2 outline-none font-medium">
+            <option value="morning">Morning (AM)</option>
+            <option value="night" selected>Night (PM)</option>
+          </select>
+          <select id="newHabitType" class="bg-white border border-oatBorder rounded-xl p-2 outline-none font-medium">
+            <option value="dropper">Amber Dropper (ml)</option>
+            <option value="gummy_jar">Gummy Jar</option>
+            <option value="pump">Pump Bottle</option>
+            <option value="capsule">Capsule Bottle</option>
+          </select>
+          <div class="col-span-2 flex gap-2">
+            <input type="number" id="newHabitDose" value="1" min="0.5" step="0.5" class="w-16 bg-white border border-oatBorder rounded-xl p-2 outline-none">
+            <input type="text" id="newHabitUnit" value="ml" placeholder="ml, gummy, tab" class="w-20 bg-white border border-oatBorder rounded-xl p-2 outline-none">
+            <input type="text" id="newHabitInstructions" placeholder="Instructions (e.g. 1 ml on scalp)" class="flex-1 bg-white border border-oatBorder rounded-xl p-2 outline-none">
+          </div>
+        </div>
+        <button onclick="addNewHabitToRoutine()" class="px-3.5 py-2 rounded-xl bg-ink text-white font-heading font-bold text-xs transition">
+          Add to Protocol
+        </button>
+      </div>
+
+      <button onclick="closeRoutineEditorModal()" class="w-full py-2.5 rounded-xl bg-terracotta text-white font-heading font-bold text-xs transition">
+        Done Editing
+      </button>
+    </div>
+  </div>
+
+  <!-- 5. GREEN POUCH PHOTO VERIFY MODAL -->
+  <div id="pouchVerifyModal" class="fixed inset-0 z-50 bg-ink/60 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-sm w-full p-5 shadow-elevated space-y-4 border border-oatBorder">
+      <div class="flex items-center justify-between">
+        <h3 class="font-heading font-bold text-base text-ink">Verify Pouch Photo</h3>
+        <button onclick="closePouchVerifyModal()" class="w-6 h-6 rounded-full bg-creamCard flex items-center justify-center text-xs">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <p class="text-xs text-inkMuted">Snap a quick photo of your 3 finished bottles in the Green Zip Pouch.</p>
+      <div class="relative w-full h-44 rounded-2xl bg-ink overflow-hidden">
+        <img id="pouchPhotoPreview" src="https://images.unsplash.com/photo-1544816155-12df9643f363?w=500&h=400&fit=crop" class="w-full h-full object-cover">
+      </div>
+      <div class="flex gap-2">
+        <input type="file" id="pouchFileInput" accept="image/*" class="hidden" onchange="handlePouchPhotoUpload(event)">
+        <button onclick="document.getElementById('pouchFileInput').click()" class="flex-1 py-2 rounded-xl bg-creamCard border border-oatBorder text-xs font-bold">
+          Choose Photo
+        </button>
+        <button onclick="submitPouchVerification()" class="flex-1 py-2 rounded-xl bg-herbal text-white text-xs font-heading font-bold">
+          Verify Pouch
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6. ADD POUCH CONTAINER MODAL -->
+  <div id="addPouchModal" class="fixed inset-0 z-50 bg-ink/60 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-sm w-full p-5 shadow-elevated space-y-3 border border-oatBorder">
+      <div class="flex items-center justify-between">
+        <h3 class="font-heading font-bold text-sm text-ink">Log Empty Container</h3>
+        <button onclick="closeAddPouchModal()" class="w-6 h-6 rounded-full bg-creamCard flex items-center justify-center text-xs">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <select id="pouchItemPresetSelect" class="w-full bg-creamCard border border-oatBorder text-ink rounded-xl p-2 text-xs font-medium outline-none">
+        <option value="Minoxidil 5% Dropper Bottle (60ml)">Minoxidil 5% Dropper Bottle (60ml)</option>
+        <option value="Biotin Gummy Tub (60s)">Biotin Gummy Tub (60s)</option>
+        <option value="Ketoconazole Cleanser Pump (200ml)">Ketoconazole Cleanser Pump (200ml)</option>
+        <option value="DHT Blocker Capsule Bottle (60s)">DHT Blocker Capsule Bottle (60s)</option>
+      </select>
+      <button onclick="confirmAddPouchItem()" class="w-full py-2 rounded-xl bg-herbal text-white font-heading font-bold text-xs">
+        Place in Pouch
+      </button>
+    </div>
+  </div>
+
+  <!-- 7. EDIT DAY 0 MODAL -->
+  <div id="day0EditorModal" class="fixed inset-0 z-50 bg-ink/60 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-sm w-full p-5 shadow-elevated space-y-3 border border-oatBorder">
+      <div class="flex items-center justify-between">
+        <h3 class="font-heading font-bold text-sm text-ink">Treatment Start Date</h3>
+        <button onclick="closeDay0EditorModal()" class="w-6 h-6 rounded-full bg-creamCard flex items-center justify-center text-xs">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <input type="date" id="inputDay0Date" value="2026-09-01" class="w-full bg-creamCard border border-oatBorder text-ink text-xs font-bold rounded-xl p-2 outline-none">
+      <button onclick="saveDay0Date()" class="w-full py-2 rounded-xl bg-ink text-white font-heading font-bold text-xs">
+        Recalculate Timeline
+      </button>
+    </div>
+  </div>
+
+  <!-- 8. PROFILE DRAWER -->
+  <div id="profileDrawer" class="fixed inset-0 z-50 bg-ink/60 backdrop-blur-sm hidden justify-end">
+    <div class="bg-white w-full max-w-sm h-full p-5 shadow-elevated space-y-5 overflow-y-auto flex flex-col justify-between border-l border-oatBorder">
+      <div class="space-y-4">
+        <div class="flex items-center justify-between border-b border-oatBorder pb-3">
+          <h3 class="font-heading font-extrabold text-base text-ink">My Profile</h3>
+          <button onclick="closeProfileDrawer()" class="w-7 h-7 rounded-full bg-creamCard flex items-center justify-center text-xs">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+        <div class="flex items-center gap-3">
+          <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&h=120&fit=crop&crop=face" class="w-12 h-12 rounded-full object-cover border border-oatBorder">
+          <div>
+            <h4 class="font-heading font-extrabold text-sm text-ink">Rahul Sharma</h4>
+            <span class="text-[11px] text-herbal font-semibold">Verified Member • ID: MM-98241</span>
+          </div>
+        </div>
+        <div class="space-y-3 text-xs">
+          <div>
+            <label class="block font-bold text-ink mb-1">Shipping Address</label>
+            <textarea class="w-full bg-creamCard border border-oatBorder rounded-xl p-2 outline-none h-16">Flat 402, Sea Green Apts, Bandra West, Mumbai - 400050</textarea>
+          </div>
+          <div>
+            <label class="block font-bold text-ink mb-1">Reminder Schedule</label>
+            <div class="grid grid-cols-2 gap-2">
+              <input type="time" value="08:30" class="bg-creamCard border border-oatBorder rounded-xl p-1.5 text-center font-bold">
+              <input type="time" value="22:00" class="bg-creamCard border border-oatBorder rounded-xl p-1.5 text-center font-bold">
+            </div>
+          </div>
+        </div>
+      </div>
+      <button onclick="closeProfileDrawer()" class="w-full py-2.5 rounded-xl bg-ink text-white font-heading font-bold text-xs">
+        Close Profile
+      </button>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- JAVASCRIPT STATE ENGINE & INTERACTIVE CONTROLLERS                         -->
+  <!-- ========================================================================= -->
+  <script>
+    /* -------------------------------------------------------------------------
+       1. CENTRAL APPLICATION STATE
+       ------------------------------------------------------------------------- */
+    const AppState = {
+      user: {
+        name: "Rahul",
+        fullName: "Rahul Sharma",
+        day0: "2026-09-01",
+        activeStreak: 18,
+        graceShieldActive: true,
+        totalDosesLogged: 84,
+      },
+      products: [
+        {
+          id: "minoxidil",
+          name: "Minoxidil 5% Solution with Procapil",
+          slot: "night",
+          slotTitle: "Night Routine (PM)",
+          type: "dropper",
+          dose: 1.0,
+          doseUnit: "ml",
+          doseInstructions: "1.0 ml using pipette onto dry scalp",
+          totalCapacity: 60.0,
+          remaining: 7.0, // 7.0ml triggers 1-Tap Reorder alert!
+          unit: "ml",
+          price: 699,
+          loggedToday: false,
+          color: "#945323",
+          liquidColor: "#D78434"
+        },
+        {
+          id: "dht",
+          name: "DHT Blocker with Saw Palmetto",
+          slot: "night",
+          slotTitle: "Night Routine (PM)",
+          type: "capsule",
+          dose: 1,
+          doseUnit: "tablet",
+          doseInstructions: "1 tablet with water post dinner",
+          totalCapacity: 60,
+          remaining: 38,
+          unit: "tablets",
+          price: 599,
+          loggedToday: false,
+          color: "#19232D",
+          liquidColor: "#475569"
+        },
+        {
+          id: "biotin",
+          name: "Biotin 5000 mcg Gummies with Zinc",
+          slot: "morning",
+          slotTitle: "Morning Routine (AM)",
+          type: "gummy_jar",
+          dose: 1,
+          doseUnit: "gummy",
+          doseInstructions: "1 chewable gummy post breakfast",
+          totalCapacity: 60,
+          remaining: 42,
+          unit: "gummies",
+          price: 499,
+          loggedToday: true,
+          color: "#D05A3F",
+          liquidColor: "#E06F55"
+        },
+        {
+          id: "shampoo",
+          name: "1% Ketoconazole Anti-Dandruff Cleanser",
+          slot: "morning",
+          slotTitle: "Morning Routine (AM)",
+          type: "pump",
+          dose: 5.0,
+          doseUnit: "ml",
+          doseInstructions: "5.0 ml gently massaged; leave for 2 mins",
+          totalCapacity: 200.0,
+          remaining: 135.0,
+          unit: "ml",
+          price: 349,
+          loggedToday: true,
+          color: "#197754",
+          liquidColor: "#229267"
+        }
+      ],
+      pouch: [
+        { id: 1, name: "Minoxidil 5% Dropper Bottle", size: "60 ml Amber Glass" },
+        { id: 2, name: "Biotin Gummy Dispenser Tub", size: "60 Gummies Tub" },
+        { id: 3, name: "Ketoconazole Scalp Cleanser", size: "200 ml Pump Bottle" }
+      ],
+      currentMonth: 9, // October 2026
+      currentYear: 2026,
+    };
+
+    /* -------------------------------------------------------------------------
+       2. COMPACT VECTOR PACKAGING FIGURES (DROPPERS, JARS, PUMPS, CAPSULES)
+       ------------------------------------------------------------------------- */
+    function renderCompactBottleFigure(product, isNightTheme = false) {
+      const pct = Math.max(0, Math.min(100, (product.remaining / product.totalCapacity) * 100));
+      const width = 48;
+      const height = 74;
+
+      if (product.type === "dropper") {
+        const fillHeight = (pct / 100) * 36;
+        const fillY = 60 - fillHeight;
+        return `
+          <svg width="${width}" height="${height}" viewBox="0 0 54 80" class="select-none shrink-0 drop-shadow-sm">
+            <rect x="25" y="12" width="4" height="50" rx="1" fill="#CBD5E1" opacity="0.6"/>
+            <rect x="11" y="${fillY}" width="32" height="${fillHeight}" rx="2" fill="${product.liquidColor}" class="smooth-fill-transition"/>
+            <ellipse cx="27" cy="${fillY}" rx="15" ry="1.8" fill="#FBBF24" opacity="0.8" class="fluid-meniscus smooth-fill-transition"/>
+            <rect x="9" y="20" width="36" height="44" rx="5" fill="none" stroke="${isNightTheme ? '#D97706' : product.color}" stroke-width="2.5" opacity="0.95"/>
+            <rect x="20" y="13" width="14" height="8" rx="1" fill="#334155"/>
+            <path d="M 21 13 C 21 4, 33 4, 33 13 Z" fill="#1E293B"/>
+            <line x1="10" y1="28" x2="15" y2="28" stroke="#FFFFFF" stroke-width="1.2" opacity="0.8"/>
+            <line x1="10" y1="42" x2="14" y2="42" stroke="#FFFFFF" stroke-width="1.2" opacity="0.8"/>
+            <line x1="10" y1="54" x2="14" y2="54" stroke="#FFFFFF" stroke-width="1.2" opacity="0.8"/>
+          </svg>
+        `;
+      } else if (product.type === "gummy_jar") {
+        const fillHeight = (pct / 100) * 34;
+        const fillY = 58 - fillHeight;
+        return `
+          <svg width="${width}" height="${height}" viewBox="0 0 54 80" class="select-none shrink-0 drop-shadow-sm">
+            <rect x="10" y="${fillY}" width="34" height="${fillHeight}" rx="2" fill="${product.liquidColor}" class="smooth-fill-transition"/>
+            <circle cx="20" cy="${Math.min(54, fillY + 8)}" r="2.5" fill="#FB923C"/>
+            <circle cx="30" cy="${Math.min(54, fillY + 6)}" r="2.5" fill="#F97316"/>
+            <rect x="8" y="20" width="38" height="42" rx="4" fill="none" stroke="#475569" stroke-width="2.2"/>
+            <rect x="12" y="12" width="30" height="9" rx="1.5" fill="#1E293B"/>
+            <rect x="14" y="36" width="26" height="11" rx="1.5" fill="#FFFFFF" opacity="0.9"/>
+            <text x="27" y="44" fill="#19232D" font-size="4" font-weight="bold" text-anchor="middle">BIOTIN</text>
+          </svg>
+        `;
+      } else if (product.type === "pump") {
+        const fillHeight = (pct / 100) * 36;
+        const fillY = 60 - fillHeight;
+        return `
+          <svg width="${width}" height="${height}" viewBox="0 0 54 80" class="select-none shrink-0 drop-shadow-sm">
+            <rect x="12" y="${fillY}" width="30" height="${fillHeight}" rx="1.5" fill="${product.liquidColor}" class="smooth-fill-transition"/>
+            <rect x="11" y="22" width="32" height="42" rx="3.5" fill="none" stroke="${product.color}" stroke-width="2.2"/>
+            <rect x="23" y="15" width="8" height="8" fill="#334155"/>
+            <path d="M 20 15 L 34 15 L 35 10 L 19 10 Z" fill="#1E293B"/>
+            <path d="M 19 11 L 11 13" stroke="#1E293B" stroke-width="2.2" stroke-linecap="round"/>
+          </svg>
+        `;
+      } else {
+        const fillHeight = (pct / 100) * 34;
+        const fillY = 59 - fillHeight;
+        return `
+          <svg width="${width}" height="${height}" viewBox="0 0 54 80" class="select-none shrink-0 drop-shadow-sm">
+            <rect x="12" y="${fillY}" width="30" height="${fillHeight}" rx="1.5" fill="${product.liquidColor}" class="smooth-fill-transition"/>
+            <rect x="10" y="20" width="34" height="43" rx="3.5" fill="none" stroke="#334155" stroke-width="2.2"/>
+            <rect x="16" y="12" width="22" height="9" rx="1.5" fill="#1E293B"/>
+            <rect x="14" y="34" width="26" height="11" rx="1.5" fill="#FFFFFF" opacity="0.9"/>
+            <text x="27" y="42" fill="#19232D" font-size="4" font-weight="bold" text-anchor="middle">DHT</text>
+          </svg>
+        `;
+      }
+    }
+
+    /* -------------------------------------------------------------------------
+       3. RENDER ROUTINES (DISTINGUISHED MORNING VS NIGHT SECTIONS)
+       ------------------------------------------------------------------------- */
+    function renderRoutines() {
+      const morningBox = document.getElementById('morningProductsList');
+      const nightBox = document.getElementById('nightProductsList');
+      const overviewMorning = document.getElementById('overviewMorningList');
+      const overviewNight = document.getElementById('overviewNightList');
+
+      if (morningBox) morningBox.innerHTML = '';
+      if (nightBox) nightBox.innerHTML = '';
+      if (overviewMorning) overviewMorning.innerHTML = '';
+      if (overviewNight) overviewNight.innerHTML = '';
+
+      let totalDoses = AppState.products.length;
+      let completedDoses = 0;
+
+      AppState.products.forEach(p => {
+        if (p.loggedToday) completedDoses++;
+
+        const daysLeft = Math.floor(p.remaining / p.dose);
+        const isCritical = daysLeft <= 7;
+        const isNight = p.slot === 'night';
+
+        // 1. Detailed Card for Routine Page
+        const card = document.createElement('div');
+        if (isNight) {
+          card.className = `p-3.5 sm:p-4 rounded-2xl ${p.loggedToday ? 'bg-nightCard/80 border-herbal/40' : 'bg-nightCard border-slate-700'} border shadow-sm flex items-center justify-between gap-3`;
+        } else {
+          card.className = `p-3.5 sm:p-4 rounded-2xl ${p.loggedToday ? 'bg-white/95 border-herbal/30' : 'bg-white border-amber-200/70'} border shadow-sm flex items-center justify-between gap-3`;
+        }
+
+        card.innerHTML = `
+          <div class="flex items-center gap-3">
+            <div class="p-1.5 rounded-xl ${isNight ? 'bg-slate-900 border border-slate-700' : 'bg-amber-50/70 border border-amber-200/60'} flex items-center justify-center shrink-0">
+              ${renderCompactBottleFigure(p, isNight)}
+            </div>
+            <div>
+              <div class="flex items-center gap-1.5">
+                <span class="font-heading font-extrabold text-xs sm:text-sm ${isNight ? 'text-white' : 'text-ink'}">${p.name}</span>
+                ${isCritical ? '<span class="text-[9px] font-bold bg-red-100 text-red-700 px-1.5 py-0.2 rounded-full animate-pulse">7d Left</span>' : ''}
+              </div>
+              <p class="text-[11px] ${isNight ? 'text-slate-300' : 'text-inkMuted'} mt-0.5">${p.doseInstructions}</p>
+              <div class="text-[10px] ${isNight ? 'text-amber-400' : 'text-amber-800'} font-semibold mt-1">
+                ${p.remaining.toFixed(1)} ${p.unit} remaining • ${daysLeft} days left
+              </div>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-2 shrink-0">
+            ${isCritical ? `
+              <button onclick="openReorderRefillModal('${p.id}')" class="px-2.5 py-1.5 rounded-xl bg-terracotta hover:bg-terracottaDark text-white text-[11px] font-bold transition flex items-center gap-1">
+                <i class="fa-solid fa-cart-shopping text-[10px]"></i>
+                <span class="hidden sm:inline">Refill</span>
+              </button>
+            ` : ''}
+
+            ${p.loggedToday ? `
+              <button onclick="undoDoseLog('${p.id}')" class="px-3 py-1.5 rounded-xl bg-herbalLight border border-herbal/30 text-herbal text-[11px] font-bold transition">
+                Done ✓
+              </button>
+            ` : `
+              <button onclick="executeDoseLog('${p.id}')" class="px-3.5 py-1.5 rounded-xl ${isNight ? 'bg-amber-400 hover:bg-amber-300 text-slate-950' : 'bg-ink hover:bg-inkLight text-white'} text-[11px] font-heading font-extrabold shadow-sm transition">
+                Take Dose
+              </button>
+            `}
+          </div>
+        `;
+
+        if (isNight && nightBox) nightBox.appendChild(card);
+        else if (!isNight && morningBox) morningBox.appendChild(card);
+
+        // 2. Mini Snapshot Item for Overview Dashboard
+        const miniItem = document.createElement('div');
+        if (isNight) {
+          miniItem.className = "p-2.5 rounded-xl bg-slate-900/80 border border-slate-700/80 flex items-center justify-between text-xs";
+        } else {
+          miniItem.className = "p-2.5 rounded-xl bg-white border border-amber-200/60 flex items-center justify-between text-xs";
+        }
+
+        miniItem.innerHTML = `
+          <div class="flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full ${p.loggedToday ? 'bg-herbal' : 'bg-amber-500'}"></span>
+            <span class="font-bold ${isNight ? 'text-white' : 'text-ink'} text-[11px]">${p.name}</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="text-[10px] ${isNight ? 'text-slate-400' : 'text-inkMuted'}">${p.remaining.toFixed(1)}${p.unit}</span>
+            ${p.loggedToday ? `
+              <span class="text-[10px] text-herbal font-bold">Done ✓</span>
+            ` : `
+              <button onclick="executeDoseLog('${p.id}')" class="px-2 py-0.5 rounded-lg bg-terracotta text-white text-[10px] font-bold">Log</button>
+            `}
+          </div>
+        `;
+
+        if (isNight && overviewNight) overviewNight.appendChild(miniItem);
+        else if (!isNight && overviewMorning) overviewMorning.appendChild(miniItem);
+      });
+
+      // Update Top Status Badges
+      const pendingDoses = totalDoses - completedDoses;
+      const badge = document.getElementById('routinePendingBadge');
+      if (badge) {
+        badge.innerText = pendingDoses > 0 ? `${pendingDoses} Due` : `All Done ✓`;
+        badge.className = pendingDoses > 0 ? "bg-terracotta text-white text-[9px] font-extrabold px-1.5 py-0.2 rounded-full" : "bg-herbal text-white text-[9px] font-extrabold px-1.5 py-0.2 rounded-full";
+      }
+
+      const overviewFraction = document.getElementById('overviewDoseProgressText');
+      if (overviewFraction) {
+        overviewFraction.innerText = `${completedDoses} of ${totalDoses} Done`;
+      }
+    }
+
+    /* -------------------------------------------------------------------------
+       4. DOSE LOGGING ACTIONS & WEB AUDIO
+       ------------------------------------------------------------------------- */
+    function executeDoseLog(productId) {
+      const p = AppState.products.find(item => item.id === productId);
+      if (!p || p.loggedToday) return;
+
+      p.remaining = Math.max(0, p.remaining - p.dose);
+      p.loggedToday = true;
+      AppState.user.totalDosesLogged += 1;
+
+      HubAudio.doseChime();
+      HubAudio.fluidDrop();
+
+      renderRoutines();
+      renderSupplyCards();
+      renderTrackerWeekStrip();
+
+      showToast(`Logged ${p.dose}${p.doseUnit} ${p.name}. Volume updated to ${p.remaining.toFixed(1)}${p.unit}.`);
+    }
+
+    function undoDoseLog(productId) {
+      const p = AppState.products.find(item => item.id === productId);
+      if (!p || !p.loggedToday) return;
+
+      p.remaining = Math.min(p.totalCapacity, p.remaining + p.dose);
+      p.loggedToday = false;
+      AppState.user.totalDosesLogged = Math.max(0, AppState.user.totalDosesLogged - 1);
+
+      HubAudio.fluidDrop();
+
+      renderRoutines();
+      renderSupplyCards();
+      renderTrackerWeekStrip();
+
+      showToast(`Reverted dose for ${p.name}.`);
+    }
+
+    /* -------------------------------------------------------------------------
+       5. SUPPLY TELEMETRY VIEW
+       ------------------------------------------------------------------------- */
+    function renderSupplyCards() {
+      const container = document.getElementById('supplyCardsGrid');
+      if (!container) return;
+      container.innerHTML = '';
+
+      AppState.products.forEach(p => {
+        const pct = Math.round((p.remaining / p.totalCapacity) * 100);
+        const daysLeft = Math.floor(p.remaining / p.dose);
+        const isCritical = daysLeft <= 7;
+
+        const card = document.createElement('div');
+        card.className = "p-4 rounded-3xl bg-white border border-oatBorder shadow-card flex flex-col justify-between space-y-3";
+
+        card.innerHTML = `
+          <div>
+            <div class="flex items-center justify-between border-b border-oatBorder pb-2">
+              <span class="text-[9px] font-extrabold uppercase text-inkMuted">${p.slotTitle}</span>
+              ${isCritical ? '<span class="text-[9px] font-bold bg-red-100 text-red-700 px-1.5 py-0.2 rounded-full">Refill Now</span>' : '<span class="text-[9px] font-bold text-herbal">OK</span>'}
+            </div>
+
+            <div class="py-3 flex items-center justify-center bg-creamCard/60 rounded-2xl border border-oatBorder/50 my-2">
+              ${renderCompactBottleFigure(p, false)}
+            </div>
+
+            <h4 class="font-heading font-extrabold text-xs text-ink leading-tight">${p.name}</h4>
+            <p class="text-[10px] text-inkMuted mt-0.5">${p.dose} ${p.doseUnit} / day</p>
+          </div>
+
+          <div class="space-y-2 pt-1 text-xs">
+            <div class="flex items-center justify-between text-[11px]">
+              <span class="font-bold text-ink">${p.remaining.toFixed(1)} / ${p.totalCapacity}${p.unit}</span>
+              <span class="${isCritical ? 'text-red-700 font-bold' : 'text-herbal font-semibold'}">${daysLeft}d left</span>
+            </div>
+            <div class="w-full h-1.5 rounded-full bg-oatBorder overflow-hidden">
+              <div class="h-full rounded-full ${isCritical ? 'bg-terracotta' : 'bg-herbal'}" style="width: ${pct}%"></div>
+            </div>
+            <button onclick="openReorderRefillModal('${p.id}')" class="w-full py-1.5 rounded-xl ${isCritical ? 'bg-terracotta text-white font-bold' : 'bg-ink text-white font-semibold'} text-[11px] transition">
+              1-Tap Refill • ₹${p.price}
+            </button>
+          </div>
+        `;
+
+        container.appendChild(card);
+      });
+    }
+
+    /* -------------------------------------------------------------------------
+       6. GREEN ECO-POUCH RECYCLING LOGIC
+       ------------------------------------------------------------------------- */
+    function renderPouchSlots() {
+      const grid = document.getElementById('pouchVisualSlotsGrid');
+      if (!grid) return;
+      grid.innerHTML = '';
+
+      for (let i = 0; i < 3; i++) {
+        const item = AppState.pouch[i];
+        const card = document.createElement('div');
+
+        if (item) {
+          card.className = "p-3.5 rounded-2xl bg-creamCard border border-herbal/40 space-y-2";
+          card.innerHTML = `
+            <div class="flex items-center justify-between">
+              <span class="text-[9px] font-bold text-herbal uppercase bg-herbalLight px-2 py-0.2 rounded-full">Slot ${i+1} Filled ✓</span>
+              <button onclick="removePouchContainer(${item.id})" class="text-xs text-red-500 hover:text-red-700"><i class="fa-solid fa-trash-can"></i></button>
+            </div>
+            <h5 class="font-heading font-bold text-xs text-ink">${item.name}</h5>
+            <p class="text-[10px] text-inkMuted">${item.size}</p>
+          `;
+        } else {
+          card.className = "p-3.5 rounded-2xl bg-white border-2 border-dashed border-oatBorder text-center space-y-1 flex flex-col items-center justify-center";
+          card.innerHTML = `
+            <span class="text-xs text-inkMuted font-bold">Empty Slot ${i+1}</span>
+            <button onclick="openAddPouchEmptyModal()" class="text-[10px] text-terracotta font-bold hover:underline">+ Log Empty Bottle</button>
+          `;
+        }
+
+        grid.appendChild(card);
+      }
+
+      document.getElementById('pouchCapacityText').innerText = `${AppState.pouch.length} / 3 Containers`;
+    }
+
+    function openAddPouchEmptyModal() {
+      if (AppState.pouch.length >= 3) {
+        showToast("Pouch already has 3 containers! Verify photo to claim reward.");
+        return;
+      }
+      document.getElementById('addPouchModal').classList.remove('hidden');
+      document.getElementById('addPouchModal').classList.add('flex');
+    }
+
+    function closeAddPouchModal() {
+      document.getElementById('addPouchModal').classList.add('hidden');
+      document.getElementById('addPouchModal').classList.remove('flex');
+    }
+
+    function confirmAddPouchItem() {
+      const preset = document.getElementById('pouchItemPresetSelect').value;
+      AppState.pouch.push({ id: Date.now(), name: preset, size: "Empty Container" });
+      closeAddPouchModal();
+      renderPouchSlots();
+      showToast(`Added ${preset} to Green Pouch!`);
+    }
+
+    function removePouchContainer(id) {
+      AppState.pouch = AppState.pouch.filter(item => item.id !== id);
+      renderPouchSlots();
+      showToast("Removed bottle from pouch.");
+    }
+
+    function openPouchVerifyModal() {
+      document.getElementById('pouchVerifyModal').classList.remove('hidden');
+      document.getElementById('pouchVerifyModal').classList.add('flex');
+    }
+
+    function closePouchVerifyModal() {
+      document.getElementById('pouchVerifyModal').classList.add('hidden');
+      document.getElementById('pouchVerifyModal').classList.remove('flex');
+    }
+
+    function handlePouchPhotoUpload(e) {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+          document.getElementById('pouchPhotoPreview').src = evt.target.result;
+          showToast("Pouch photo loaded.");
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    function submitPouchVerification() {
+      closePouchVerifyModal();
+      HubAudio.successChime();
+      showToast("Pouch verified digitally! Hand over to the rider during your next refill.");
+    }
+
+    function claimDiscoverySample() {
+      const sel = document.getElementById('discoverySampleSelect');
+      const text = sel.options[sel.selectedIndex].text;
+      HubAudio.successChime();
+      showToast(`Claimed Free Gift: ${text}! Packed with your upcoming refill.`);
+    }
+
+    /* -------------------------------------------------------------------------
+       7. 1-TAP REORDER REFILL LOGIC
+       ------------------------------------------------------------------------- */
+    let activeRefillTarget = "minoxidil";
+
+    function openReorderRefillModal(productId) {
+      activeRefillTarget = productId || "minoxidil";
+      const p = AppState.products.find(item => item.id === activeRefillTarget);
+      if (p) {
+        document.getElementById('refillModalProductName').innerText = `${p.name} (${p.totalCapacity}${p.unit})`;
+      }
+      document.getElementById('reorderRefillModal').classList.remove('hidden');
+      document.getElementById('reorderRefillModal').classList.add('flex');
+    }
+
+    function closeReorderRefillModal() {
+      document.getElementById('reorderRefillModal').classList.add('hidden');
+      document.getElementById('reorderRefillModal').classList.remove('flex');
+    }
+
+    function executeRefillOrder() {
+      const p = AppState.products.find(item => item.id === activeRefillTarget);
+      if (p) {
+        p.remaining = p.totalCapacity;
+        HubAudio.successChime();
+        renderRoutines();
+        renderSupplyCards();
+        closeReorderRefillModal();
+        showToast(`Refill confirmed! Bottle volume restored to ${p.totalCapacity}${p.unit}.`);
+      }
+    }
+
+    /* -------------------------------------------------------------------------
+       8. SIMULATED WHATSAPP CARE BOT
+       ------------------------------------------------------------------------- */
+    function openWhatsAppModal() {
+      const minox = AppState.products.find(p => p.id === 'minoxidil');
+      if (minox) {
+        document.getElementById('waBottleStatusText').innerText = `${minox.remaining.toFixed(1)} ml left (${Math.floor(minox.remaining/minox.dose)} Days left)`;
+      }
+      document.getElementById('whatsAppModal').classList.remove('hidden');
+      document.getElementById('whatsAppModal').classList.add('flex');
+    }
+
+    function closeWhatsAppModal() {
+      document.getElementById('whatsAppModal').classList.add('hidden');
+      document.getElementById('whatsAppModal').classList.remove('flex');
+    }
+
+    function executeWhatsAppDoseLog() {
+      executeDoseLog('minoxidil');
+      const actions = document.getElementById('waActionButtons');
+      if (actions) {
+        actions.innerHTML = `
+          <div class="p-2 rounded-xl bg-[#DCF8C6] border border-[#B2D8A4] text-ink text-[11px] font-semibold text-center">
+            ✓ Night Dose Logged at 10:01 PM. Streak protected!
+          </div>
+        `;
+      }
+      setTimeout(() => closeWhatsAppModal(), 1500);
+    }
+
+    /* -------------------------------------------------------------------------
+       9. 15-DAY PHOTO JOURNAL & GEMINI EVALUATION
+       ------------------------------------------------------------------------- */
+    function populatePhotoMilestones() {
+      const ribbon = document.getElementById('photoMilestonesRibbon');
+      if (!ribbon) return;
+      ribbon.innerHTML = '';
+
+      const milestones = [
+        { label: "Day 0", offset: 0, status: "Baseline ✓", completed: true },
+        { label: "Day 15", offset: 15, status: "Done ✓", completed: true },
+        { label: "Day 30", offset: 30, status: "Done ✓", completed: true },
+        { label: "Day 45", offset: 45, status: "Due Tomorrow", active: true },
+        { label: "Day 60", offset: 60, status: "Upcoming", upcoming: true },
+        { label: "Day 75", offset: 75, status: "Upcoming", upcoming: true },
+        { label: "Day 90", offset: 90, status: "Quarterly", upcoming: true },
+      ];
+
+      const baseline = new Date(AppState.user.day0);
+
+      milestones.forEach(m => {
+        const d = new Date(baseline);
+        d.setDate(d.getDate() + m.offset);
+        const dateStr = d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short' });
+
+        const tile = document.createElement('div');
+        tile.className = `p-2.5 rounded-2xl border text-center space-y-0.5 ${
+          m.active ? 'bg-amber-50 border-amber-400 ring-2 ring-amber-300' :
+          m.completed ? 'bg-herbalLight border-herbal/30 text-herbal' : 'bg-creamCard border-oatBorder text-inkMuted'
+        }`;
+
+        tile.innerHTML = `
+          <div class="text-[9px] font-extrabold uppercase">${m.label}</div>
+          <div class="font-heading font-extrabold text-xs text-ink">${dateStr}</div>
+          <span class="text-[8px] font-bold block ${m.active ? 'text-amber-900' : ''}">${m.status}</span>
+        `;
+
+        ribbon.appendChild(tile);
+      });
+    }
+
+    function toggleHairlineGuide() {
+      const g = document.getElementById('hairlineGuideOverlay');
+      if (g) g.classList.toggle('hidden');
+    }
+
+    function handleScalpPhotoUpload(e) {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+          document.getElementById('scalpPhotoPreview').src = evt.target.result;
+          showToast("Scalp photo loaded.");
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    async function evaluateMilestoneWithGemini() {
+      const card = document.getElementById('aiEvaluationCard');
+      const content = document.getElementById('aiEvaluationContent');
+      const btn = document.getElementById('btnGenerateReport');
+
+      card.classList.remove('hidden');
+      content.innerHTML = `<span class="text-inkMuted"><i class="fa-solid fa-circle-notch fa-spin text-terracotta mr-1.5"></i>Dr. Rohan analyzing follicular stabilization...</span>`;
+      btn.disabled = true;
+
+      const apiKey = "";
+      const prompt = "You are Dr. Rohan from Man Matters. Reassure patient Rahul (Day 45, Week 6) that loose shedding is natural. Give 2 short, practical tips in warm plain English.";
+
+      try {
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
+        const payload = {
+          contents: [{ parts: [{ text: prompt }] }],
+          systemInstruction: { parts: [{ text: "Dr. Rohan at Man Matters. Friendly, reassuring, practical tone. Zero scary jargon." }] }
+        };
+
+        const res = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+        const data = await res.json();
+        const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+
+        if (text) content.innerHTML = text.replace(/\n/g, '<br>');
+        else throw new Error();
+      } catch (e) {
+        content.innerHTML = `
+          <p><strong>Dr. Rohan:</strong> You're right on track, Rahul. Week 6 shedding means older resting hairs are clearing out for strong anagen roots. Keep applying 1.0ml onto a completely dry scalp nightly!</p>
+        `;
+      } finally {
+        btn.disabled = false;
+      }
+    }
+
+    /* -------------------------------------------------------------------------
+       10. STREAKS & CALENDAR
+       ------------------------------------------------------------------------- */
+    function renderTrackerWeekStrip() {
+      const container = document.getElementById('trackerWeekStrip');
+      if (!container) return;
+      container.innerHTML = '';
+
+      const days = [
+        { name: "Mon", date: "12 Oct", status: "completed" },
+        { name: "Tue", date: "13 Oct", status: "completed" },
+        { name: "Wed", date: "14 Oct", status: "completed" },
+        { name: "Thu", date: "15 Oct", status: "today" },
+        { name: "Fri", date: "16 Oct", status: "upcoming" },
+        { name: "Sat", date: "17 Oct", status: "upcoming" },
+        { name: "Sun", date: "18 Oct", status: "upcoming" },
+      ];
+
+      days.forEach(d => {
+        const div = document.createElement('div');
+        div.className = `p-2 rounded-2xl border text-center ${
+          d.status === 'today' ? 'bg-amber-50 border-amber-300 ring-2 ring-amber-200' :
+          d.status === 'completed' ? 'bg-herbalLight border-herbal/30 text-herbal' : 'bg-creamCard border-oatBorder text-inkMuted'
+        }`;
+
+        div.innerHTML = `
+          <span class="text-[9px] font-bold block">${d.name}</span>
+          <span class="font-heading font-extrabold text-xs text-ink">${d.date}</span>
+          <div class="pt-0.5 text-[10px]">
+            ${d.status === 'completed' ? '<i class="fa-solid fa-check"></i>' :
+              d.status === 'today' ? '<span class="font-bold text-amber-900">Today</span>' : '–'}
+          </div>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function renderMonthlyTrackerMatrix() {
+      const grid = document.getElementById('monthlyTrackerMatrix');
+      if (!grid) return;
+      grid.innerHTML = '';
+
+      for (let i = 0; i < 3; i++) {
+        const blank = document.createElement('div');
+        blank.className = "h-9 rounded-xl bg-creamCard/40";
+        grid.appendChild(blank);
+      }
+
+      for (let day = 1; day <= 31; day++) {
+        const tile = document.createElement('div');
+        let status = "completed";
+        if (day === 8) status = "grace_shield";
+        if (day === 15) status = "today";
+        if (day > 15) status = "upcoming";
+
+        tile.className = `h-9 rounded-xl border flex flex-col items-center justify-center cursor-pointer transition ${
+          status === 'today' ? 'bg-amber-50 border-amber-400 font-extrabold text-amber-900 ring-2 ring-amber-300' :
+          status === 'completed' ? 'bg-herbalLight border-herbal/20 text-herbal' :
+          status === 'grace_shield' ? 'bg-blue-50 border-blue-300 text-blue-700' : 'bg-creamCard border-oatBorder text-inkMuted'
+        }`;
+
+        tile.innerHTML = `
+          <span class="text-[11px] font-bold">${day}</span>
+          <span class="text-[9px]">
+            ${status === 'completed' ? '<i class="fa-solid fa-check"></i>' :
+              status === 'grace_shield' ? '<i class="fa-solid fa-shield-halved"></i>' : ''}
+          </span>
+        `;
+
+        tile.onclick = () => {
+          if (day < 15) showToast(`${day} Oct: Verified under Grace Shield.`);
+        };
+
+        grid.appendChild(tile);
+      }
+    }
+
+    function navigateTrackerMonth(dir) {
+      AppState.currentMonth += dir;
+      const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+      document.getElementById('trackerMonthLabel').innerText = `${monthNames[((AppState.currentMonth % 12) + 12) % 12]} 2026`;
+      showToast("Updated month.");
+    }
+
+    /* -------------------------------------------------------------------------
+       11. DR. ROHAN AI ASSISTANT CHAT
+       ------------------------------------------------------------------------- */
+    async function sendAssistantQuery(text) {
+      const input = document.getElementById('assistantUserInput');
+      const query = text || input.value.trim();
+      if (!query) return;
+      if (!text) input.value = '';
+
+      const chat = document.getElementById('assistantChatMessages');
+
+      const userBubble = document.createElement('div');
+      userBubble.className = "flex items-start justify-end gap-2";
+      userBubble.innerHTML = `<div class="bg-ink text-white p-3 rounded-2xl rounded-tr-sm text-xs max-w-sm">${query}</div>`;
+      chat.appendChild(userBubble);
+      chat.scrollTop = chat.scrollHeight;
+
+      const loading = document.createElement('div');
+      loading.className = "flex items-start gap-2 text-xs text-inkMuted";
+      loading.innerHTML = `<div class="w-6 h-6 rounded-full bg-herbal text-white flex items-center justify-center text-[10px] font-bold">DR</div><div class="bg-creamCard p-2 rounded-xl">Thinking...</div>`;
+      chat.appendChild(loading);
+      chat.scrollTop = chat.scrollHeight;
+
+      const apiKey = "";
+      const prompt = `Rahul on Day 42 (Week 6) asks: "${query}". Answer warmly and plainly as Dr. Rohan from Man Matters.`;
+
+      try {
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
+        const payload = {
+          contents: [{ parts: [{ text: prompt }] }],
+          systemInstruction: { parts: [{ text: "Dr. Rohan at Man Matters. Friendly, encouraging, zero scary medical jargon." }] }
+        };
+
+        const res = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+        const data = await res.json();
+        const reply = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+
+        loading.remove();
+
+        const replyBubble = document.createElement('div');
+        replyBubble.className = "flex items-start gap-2 max-w-md";
+        replyBubble.innerHTML = `
+          <div class="w-6 h-6 rounded-full bg-herbal text-white flex items-center justify-center text-[10px] font-bold shrink-0">DR</div>
+          <div class="bg-creamCard p-3 rounded-2xl rounded-tl-sm text-xs text-ink leading-relaxed">
+            ${reply ? reply.replace(/\n/g, '<br>') : "Stick to your daily schedule and you'll see great density!"}
+          </div>
+        `;
+        chat.appendChild(replyBubble);
+        chat.scrollTop = chat.scrollHeight;
+      } catch(e) {
+        loading.remove();
+        const fallback = document.createElement('div');
+        fallback.className = "flex items-start gap-2 max-w-md";
+        fallback.innerHTML = `
+          <div class="w-6 h-6 rounded-full bg-herbal text-white flex items-center justify-center text-[10px] font-bold shrink-0">DR</div>
+          <div class="bg-creamCard p-3 rounded-2xl rounded-tl-sm text-xs text-ink leading-relaxed">
+            Week 6 shedding is completely expected and proves your treatment is activating. Keep up your 18-day streak!
+          </div>
+        `;
+        chat.appendChild(fallback);
+        chat.scrollTop = chat.scrollHeight;
+      }
+    }
+
+    function askPresetQuestion(q) {
+      sendAssistantQuery(q);
+    }
+
+    /* -------------------------------------------------------------------------
+       12. ROUTINE BUILDER MODAL LOGIC
+       ------------------------------------------------------------------------- */
+    function openRoutineEditorModal() {
+      renderRoutineEditorItems();
+      document.getElementById('routineEditorModal').classList.remove('hidden');
+      document.getElementById('routineEditorModal').classList.add('flex');
+    }
+
+    function closeRoutineEditorModal() {
+      document.getElementById('routineEditorModal').classList.add('hidden');
+      document.getElementById('routineEditorModal').classList.remove('flex');
+    }
+
+    function renderRoutineEditorItems() {
+      const list = document.getElementById('routineEditorItemsList');
+      if (!list) return;
+      list.innerHTML = '';
+
+      AppState.products.forEach(p => {
+        const row = document.createElement('div');
+        row.className = "p-2.5 rounded-xl bg-white border border-oatBorder flex items-center justify-between text-xs";
+        row.innerHTML = `
+          <div>
+            <span class="font-bold text-ink block">${p.name}</span>
+            <span class="text-[10px] text-inkMuted">${p.slotTitle} • ${p.doseInstructions}</span>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <select onchange="updateProductSlot('${p.id}', this.value)" class="text-[11px] bg-creamCard border border-oatBorder rounded-lg p-1 outline-none font-medium">
+              <option value="morning" ${p.slot === 'morning' ? 'selected' : ''}>AM</option>
+              <option value="night" ${p.slot === 'night' ? 'selected' : ''}>PM</option>
+            </select>
+            <button onclick="deleteProductFromRoutine('${p.id}')" class="text-red-500 hover:text-red-700 p-1"><i class="fa-solid fa-trash-can text-xs"></i></button>
+          </div>
+        `;
+        list.appendChild(row);
+      });
+    }
+
+    function updateProductSlot(id, newSlot) {
+      const p = AppState.products.find(item => item.id === id);
+      if (p) {
+        p.slot = newSlot;
+        p.slotTitle = newSlot === 'morning' ? 'Morning Routine (AM)' : 'Night Routine (PM)';
+        renderRoutines();
+        showToast(`Moved ${p.name} to ${newSlot.toUpperCase()}`);
+      }
+    }
+
+    function deleteProductFromRoutine(id) {
+      if (AppState.products.length <= 1) {
+        showToast("You need at least 1 product in your routine.");
+        return;
+      }
+      AppState.products = AppState.products.filter(item => item.id !== id);
+      renderRoutineEditorItems();
+      renderRoutines();
+      renderSupplyCards();
+      showToast("Removed product.");
+    }
+
+    function addNewHabitToRoutine() {
+      const name = document.getElementById('newHabitName').value.trim();
+      const slot = document.getElementById('newHabitSlot').value;
+      const type = document.getElementById('newHabitType').value;
+      const dose = parseFloat(document.getElementById('newHabitDose').value) || 1;
+      const unit = document.getElementById('newHabitUnit').value.trim() || 'ml';
+      const instructions = document.getElementById('newHabitInstructions').value.trim() || `${dose} ${unit} daily`;
+
+      if (!name) {
+        showToast("Enter a product or habit name.");
+        return;
+      }
+
+      AppState.products.push({
+        id: "prod_" + Date.now(),
+        name: name,
+        slot: slot,
+        slotTitle: slot === 'morning' ? 'Morning Routine (AM)' : 'Night Routine (PM)',
+        type: type,
+        dose: dose,
+        doseUnit: unit,
+        doseInstructions: instructions,
+        totalCapacity: type === 'dropper' ? 60 : 100,
+        remaining: type === 'dropper' ? 60 : 100,
+        unit: unit,
+        price: 499,
+        loggedToday: false,
+        color: "#197754",
+        liquidColor: "#229267"
+      });
+
+      document.getElementById('newHabitName').value = '';
+      document.getElementById('newHabitInstructions').value = '';
+
+      renderRoutineEditorItems();
+      renderRoutines();
+      renderSupplyCards();
+      showToast(`Added ${name} to ${slot.toUpperCase()} routine!`);
+    }
+
+    /* -------------------------------------------------------------------------
+       13. VIEW SWITCHER
+       ------------------------------------------------------------------------- */
+    function switchTab(tabKey) {
+      const tabs = ['overview', 'routine', 'recycling', 'supply', 'journal', 'tracker', 'assistant'];
+
+      tabs.forEach(t => {
+        const sec = document.getElementById(`tab-${t}`);
+        const btn = document.getElementById(`tab-btn-${t}`);
+        if (sec) sec.classList.add('hidden');
+        if (btn) {
+          btn.className = "tab-btn px-2.5 sm:px-3 py-1.5 rounded-xl text-inkMuted hover:text-ink hover:bg-white/60 flex items-center gap-1.5 whitespace-nowrap transition";
+        }
+      });
+
+      const activeSec = document.getElementById(`tab-${tabKey}`);
+      const activeBtn = document.getElementById(`tab-btn-${tabKey}`);
+
+      if (activeSec) activeSec.classList.remove('hidden');
+      if (activeBtn) {
+        activeBtn.className = "tab-btn px-2.5 sm:px-3 py-1.5 rounded-xl text-terracotta bg-white border border-terracotta/30 shadow-subtle flex items-center gap-1.5 whitespace-nowrap transition";
+      }
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    /* -------------------------------------------------------------------------
+       14. BEFORE/AFTER SLIDER
+       ------------------------------------------------------------------------- */
+    function initComparisonSlider() {
+      const stage = document.getElementById('sliderStage');
+      const clip = document.getElementById('sliderBeforeClip');
+      const handle = document.getElementById('sliderHandle');
+      if (!stage || !clip || !handle) return;
+
+      let isDragging = false;
+
+      function updateSlider(x) {
+        const rect = stage.getBoundingClientRect();
+        let posX = x - rect.left;
+        posX = Math.max(0, Math.min(rect.width, posX));
+        const pct = (posX / rect.width) * 100;
+        clip.style.width = `${pct}%`;
+        handle.style.left = `${pct}%`;
+      }
+
+      stage.addEventListener('mousedown', () => { isDragging = true; });
+      window.addEventListener('mouseup', () => { isDragging = false; });
+      window.addEventListener('mousemove', (e) => { if (isDragging) updateSlider(e.clientX); });
+
+      stage.addEventListener('touchstart', () => { isDragging = true; });
+      window.addEventListener('touchend', () => { isDragging = false; });
+      window.addEventListener('touchmove', (e) => { if (isDragging) updateSlider(e.touches[0].clientX); });
+    }
+
+    /* -------------------------------------------------------------------------
+       15. TOAST NOTIFIER & INITIAL BOOTSTRAP
+       ------------------------------------------------------------------------- */
+    function showToast(message) {
+      const container = document.getElementById('toastContainer');
+      if (!container) return;
+
+      const toast = document.createElement('div');
+      toast.className = "pointer-events-auto bg-ink text-white px-3.5 py-2.5 rounded-2xl shadow-elevated text-xs font-semibold flex items-center gap-2 transition transform translate-y-2 opacity-0";
+      toast.innerHTML = `<span class="w-4 h-4 rounded-full bg-herbal text-white flex items-center justify-center text-[9px]"><i class="fa-solid fa-check"></i></span><span>${message}</span>`;
+
+      container.appendChild(toast);
+      requestAnimationFrame(() => toast.classList.remove('translate-y-2', 'opacity-0'));
+
+      setTimeout(() => {
+        toast.classList.add('translate-y-2', 'opacity-0');
+        setTimeout(() => toast.remove(), 350);
+      }, 3000);
+    }
+
+    function openSheddingGuideModal() {
+      document.getElementById('sheddingGuideModal').classList.remove('hidden');
+      document.getElementById('sheddingGuideModal').classList.add('flex');
+    }
+
+    function closeSheddingGuideModal() {
+      document.getElementById('sheddingGuideModal').classList.add('hidden');
+      document.getElementById('sheddingGuideModal').classList.remove('flex');
+    }
+
+    function openDay0EditorModal() {
+      document.getElementById('day0EditorModal').classList.remove('hidden');
+      document.getElementById('day0EditorModal').classList.add('flex');
+    }
+
+    function closeDay0EditorModal() {
+      document.getElementById('day0EditorModal').classList.add('hidden');
+      document.getElementById('day0EditorModal').classList.remove('flex');
+    }
+
+    function saveDay0Date() {
+      const val = document.getElementById('inputDay0Date').value;
+      if (val) {
+        AppState.user.day0 = val;
+        const d = new Date(val);
+        document.getElementById('journalDay0Text').innerText = d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+        populatePhotoMilestones();
+        closeDay0EditorModal();
+        showToast("Day 0 timeline updated.");
+      }
+    }
+
+    function openProfileDrawer() {
+      document.getElementById('profileDrawer').classList.remove('hidden');
+      document.getElementById('profileDrawer').classList.add('flex');
+    }
+
+    function closeProfileDrawer() {
+      document.getElementById('profileDrawer').classList.add('hidden');
+      document.getElementById('profileDrawer').classList.remove('flex');
+    }
+
+    window.onload = function() {
+      renderRoutines();
+      renderSupplyCards();
+      renderPouchSlots();
+      populatePhotoMilestones();
+      renderTrackerWeekStrip();
+      renderMonthlyTrackerMatrix();
+      initComparisonSlider();
+    };
+  </script>
+
+</body>
+</html>
